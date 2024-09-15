@@ -14,11 +14,11 @@ exports.uploadFile = (req, res) => {
         VALUES (?, ?, ?, ?, ?, ?)`,
         [req.file_name, req.original_name, req.uploader, req.upload_date, req.file.path, isSatreamable],
         (err) => {
-            if (err) {
+          if (err) {
               return res.status(500).send('Error storing file metadata');
-            }
-            res.status(201).send('File uploaded successfully');
           }
+        res.status(201).send('File uploaded successfully');
+        }
     );
 };
 
@@ -34,4 +34,9 @@ exports.listFiles = (req, res) => {
       }
       res.json(files);
     });
+
+    // TODO: come back and revise this, hook into for IsStreamable
+    const streamFile = file.is_streamable ? 'inline' : 'attachment';
+    res.setHeader('Content-Disposition', `${streamFile}; filename="${file.originalname}"`);
+    res.sendFile(path.resolve(file.filepath));
 };
