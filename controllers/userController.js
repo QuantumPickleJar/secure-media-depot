@@ -1,5 +1,5 @@
 const bcrypt = require('bcrypt');
-const db = require('./db');
+const db = require('../database/db');
 
 /**
  * Register a new user.
@@ -22,7 +22,10 @@ exports.getUserProfile = (req, res) => {
   const username = req.user.username;
 
   db.get(`SELECT username FROM users WHERE username = ?`, [username], (err, user) => {
-    if (err || !user) {
+    if (err) {
+      return res.status(500).send('Server error');
+    }
+    if (!user) {
       return res.status(404).send('User not found');
     }
     res.json({ username: user.username });
