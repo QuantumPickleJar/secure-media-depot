@@ -1,10 +1,12 @@
-const { db } = require('../server');
+const sqlite3 = require('sqlite3').verbose();
 
 /**
  * Represents a database connection.
  * @class
  */
-const db = new sqlite3.Database('./media.db', (err) => {
+// const db = new sqlite3.Database('./media.db', (err) => {
+const db = new sqlite3.Database(
+    path.resolve(__dirname, '../media.db'), (err) => {
     if (err) {
         console.error('Error opening database', err);
     } else {
