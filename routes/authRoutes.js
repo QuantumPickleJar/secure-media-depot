@@ -2,20 +2,6 @@ const express = require('express');
 const router = express.Router();
 const authController = require('../controllers/authController');
 
-/**
- * Controller for handling authentication related operations.
- * @namespace authController
- */
-
-/**
- * Route for user registration.
- * @name router.post/register
- * @function
- * @memberof authController
- * @param {string} path - The URL path for the route.
- * @param {function} middleware - The middleware function to be executed for the route.
- */
-router.post('/register', authController.register);
 
 /**
  * Route for user login.
@@ -25,7 +11,7 @@ router.post('/register', authController.register);
  * @param {string} path - The URL path for the route.
  * @param {function} middleware - The middleware function to be executed for the route.
  */
-router.post('/login', authController.login);
+router.post('/login', authController.loginUser);
 
 /**
  * Route for user logout.
@@ -35,6 +21,6 @@ router.post('/login', authController.login);
  * @param {string} path - The URL path for the route.
  * @param {function} middleware - The middleware function to be executed for the route.
  */
-router.post('/logout', authController.logout);
+router.post('/logout', authController.logoutUsert);
 
 // Additional router.post statements can be added here with corresponding docstring comments.

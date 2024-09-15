@@ -2,22 +2,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const db = require('../database/db');
 
-/**
- * Register a new user.
- * @param {string} username - The username of the user.
- * @param {string} password - The password of the user.
- * @returns {Promise} A promise that resolves when the user is registered.
- */
-exports.registerUser = async (req, res) => {
-  const { username, password } = req.body;
-  const hashedPassword = await bcrypt.hash(password, 10);
-  db.run(`INSERT INTO users (username, password) VALUES (?, ?)`, [username, hashedPassword], (err) => {
-    if (err) {
-      return res.status(400).send('Username already exists.');
-    }
-    res.status(201).send('User registered successfully');
-  });
-};
+
 
 /**
  * Generates a JSON Web Token for the given username.
@@ -38,7 +23,11 @@ exports.loginUser = (req, res) => {
   const { username, password } = req.body;
 
   db.get(`SELECT * FROM users WHERE username = ?`, [username], async (err, user) => {
-    if (err || !user) {
+    if (err) {
+      return res.status(500).send('Server error');
+    }
+    
+    if (!user) {
       return res.status(400).send('Invalid username or password');
     }
 
@@ -50,3 +39,12 @@ exports.loginUser = (req, res) => {
     res.json({ token });
   });
 };
+
+/** Note: for jwt, logout can be handled on the client-side by deleting the token.  
+/*  Alternatively, implement token blacklisting on the server-side if necessary.
+ */
+exports.logoutUser = (req, res) => {
+  // req.logout();
+  // res.redirect('/');\\ 
+  res.send('Logout successful');
+}
