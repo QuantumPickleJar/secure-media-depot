@@ -34,7 +34,7 @@ db.serialize(() => {
             file_name TEXT,
             original_name TEXT,
             uploader TEXT,
-            upload_date DATETIME,
+            upload_date DATETIME DEFAULT CURRENT_TIMESTAMP,
             file_path TEXT,
             is_streamable INTEGER
         )
