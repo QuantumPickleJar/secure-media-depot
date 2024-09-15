@@ -32,4 +32,4 @@ exports.getUserProfile = (req, res) => {
   });
 };
 
-// TODO: delete user
+// TODO: delete user, update user profile
