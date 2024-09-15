@@ -27,3 +27,5 @@ router.post('/register', userController.registerUser);
  * The controller function for getting user profile.
  */
 router.post('/profile', authenticateJWT, userController.getUserProfile);
+
+module.exports = router;

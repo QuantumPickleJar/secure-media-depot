@@ -7,8 +7,8 @@ const authController = require('../controllers/authController');
  * Route for user login.
  * @name POST /login
  * @function
- * @memberof module:userRoutes
- * @param {function} userController.logout 
+ * @memberof module:authController
+ * @param {function} authController.logout 
  * The controller function for user logout.
  */
 router.post('/login', authController.loginUser);
@@ -19,8 +19,8 @@ router.post('/login', authController.loginUser);
  * @function
  * @memberof module:authController
  * @param {string} path - The URL path for the route.
- * @param {function} middleware - The middleware function to be executed for the route.
  */
-router.post('/logout', authController.logoutUsert);
+router.post('/logout', authController.logoutUser);
 
 // Additional router.post statements can be added here with corresponding docstring comments.
+module.exports = router;
