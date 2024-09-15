@@ -5,19 +5,19 @@ const authController = require('../controllers/authController');
 
 /**
  * Route for user login.
- * @name router.post/login
+ * @name POST /login
  * @function
- * @memberof authController
- * @param {string} path - The URL path for the route.
- * @param {function} middleware - The middleware function to be executed for the route.
+ * @memberof module:userRoutes
+ * @param {function} userController.logout 
+ * The controller function for user logout.
  */
 router.post('/login', authController.loginUser);
 
 /**
  * Route for user logout.
- * @name router.post/logout
+ * @name POST /logout
  * @function
- * @memberof authController
+ * @memberof module:authController
  * @param {string} path - The URL path for the route.
  * @param {function} middleware - The middleware function to be executed for the route.
  */
