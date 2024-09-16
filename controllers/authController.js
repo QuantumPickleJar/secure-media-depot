@@ -12,8 +12,8 @@ const jwtService = require('../services/jwtService')
  */
 exports.loginUser = (req, res) => {
   const { username, password } = req.body;
+
   db.get(`SELECT * FROM users WHERE username = ?`, [username], async (err, user) => {
-  
     if (err) {
       return res.status(500).send('Server error');
     }
@@ -22,17 +22,21 @@ exports.loginUser = (req, res) => {
       return res.status(400).send('Invalid username or password');
     }
 
+    if (user.isApproved === 0) {
+      return res.status(403).send('Your account is awaiting approval.');
+    }
+
     try {
       const validPassword = await bcrypt.compare(password, user.password);
       if (!validPassword) {
         return res.status(400).send('Invalid username or password');
       }
 
-      const token = jwtService.generateToken({ username });
+      const token = jwtService.generateToken({ username: user.username, isAdmin: user.isAdmin });
       res.json({ token });
     } catch (error) {
       res.status(500).send('Server error');
-  }
+    }
   });
 };
 
