@@ -1,5 +1,5 @@
-const bcrypt = require('bcrypt');
-const db = require('../database/db');
+const bcrypt = require('bcryptjs');
+const User = require('../models/userModel');
 
 /**
  * Register a new user.
@@ -8,29 +8,41 @@ const db = require('../database/db');
  * @returns {Promise} A promise that resolves when the user is registered.
  */
 exports.registerUser = async (req, res) => {
-  const { username, password } = req.body;
-  const hashedPassword = await bcrypt.hash(password, 10);
+  const { username, email, password } = req.body;
+  try {
 
-  db.run(
-    `INSERT INTO users (username, password) VALUES (?, ?)`, 
-    [username, hashedPassword], 
-    (err) => {
-      if (err) {
-        return res.status(400).send('Username already exists.');
-      }
-    res.status(201).send('User registered successfully');
-  });
+    const hashedPassword = await bcrypt.hash(password, 10);
+    
+    const user = User.create(username, email, password);
+    res.status(201).json({
+      message: 'User successfully registered!', user});
+    
+  } catch (err) {
+    if (err.code === 'SQLITE_CONSTRAINT') { // on unique ID collisions:
+      res.status(400).json({error: 'Username/email already in use'});
+    }
+    else { 
+      res.status(500).json({error: 'Internal server error!'});
+    }
+  }
+
 };
 
-exports.getUserProfile = (req, res) => {
-  const username = req.user.username;
-
-  db.get(`SELECT username FROM users WHERE username = ?`, [username], (err, user) => {
-    if (err || !user) {
-      return res.status(404).send('User not found');
+exports.getUserProfile = async (req, res) => {
+  const username = req.user;
+  // try to find the username, error if we can't find them
+  try {
+    const user = await User.findByUsername;
+    if(user) {
+      res.json({ username: user.username, email: user.email });
     }
-    res.json({ username: user.username });
-  });
+    if (err || !user) {
+      res.status(404).send('User not found');
+    }
+  }
+  catch {
+    res.status(500).json({ error: 'Internal server error!'});
+  }
 };
 
 // TODO: delete user, update user profile

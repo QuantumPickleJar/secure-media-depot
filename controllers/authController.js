@@ -12,8 +12,8 @@ const jwtService = require('../services/jwtService')
  */
 exports.loginUser = (req, res) => {
   const { username, password } = req.body;
-
   db.get(`SELECT * FROM users WHERE username = ?`, [username], async (err, user) => {
+  
     if (err) {
       return res.status(500).send('Server error');
     }
@@ -32,6 +32,8 @@ exports.loginUser = (req, res) => {
       res.json({ token });
     } catch (error) {
       res.status(500).send('Server error');
+  }
+  });
 };
 
 /** Note: for jwt, logout can be handled on the client-side by deleting the token.  
