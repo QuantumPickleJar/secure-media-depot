@@ -1,6 +1,6 @@
 const bcrypt = require('bcryptjs');
 const db = require('../database/db');
-const jwtService = require('jwtService.js')
+const jwtService = require('../services/jwtService')
 
 
 /**
@@ -22,14 +22,16 @@ exports.loginUser = (req, res) => {
       return res.status(400).send('Invalid username or password');
     }
 
-    const validPassword = await bcrypt.compare(password, user.password);
-    if (!validPassword) {
-      return res.status(400).send('Invalid username or password');
-    }
-    
-    const token = jwtService.generateToken({ username });
-    res.json({ token });
-  });
+    try {
+      const validPassword = await bcrypt.compare(password, user.password);
+      if (!validPassword) {
+        return res.status(400).send('Invalid username or password');
+      }
+
+      const token = jwtService.generateToken({ username });
+      res.json({ token });
+    } catch (error) {
+      res.status(500).send('Server error');
 };
 
 /** Note: for jwt, logout can be handled on the client-side by deleting the token.  
