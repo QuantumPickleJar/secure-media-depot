@@ -9,7 +9,7 @@ const express = require('express');
 const router = express.Router();
 const authenticateJWT = require('../auth/authMiddleware');
 const fileController = require('../controllers/fileController');
-const upload = require('../config/multerConfig');
+const upload = require('../config/multer');
 
 /**
  * Route for uploading a file.
@@ -44,5 +44,7 @@ router.get('/files', authenticateJWT, fileController.listFiles);
  * @param {callback} controller - Controller function for getting a file by ID
  */
 router.get('/files/:id', authenticateJWT, fileController.getFileById);
+
+router.get('/files/search', authenticateJWT, fileController.searchFiles)
 
 module.exports = router;

@@ -1,4 +1,5 @@
 const sqlite3 = require('sqlite3').verbose();
+const path = require('path');
 
 /**
  * Represents a database connection.
@@ -6,7 +7,7 @@ const sqlite3 = require('sqlite3').verbose();
  */
 // const db = new sqlite3.Database('./media.db', (err) => {
 const db = new sqlite3.Database(
-    path.resolve(__dirname, '../media.db'), (err) => {
+    path.resolve(__dirname, './media.db'), (err) => {
     if (err) {
         console.error('Error opening database', err);
     } else {
@@ -25,6 +26,7 @@ db.serialize(() => {
         CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             username TEXT UNIQUE,
+            email TEXT, 
             password TEXT
         )
     `);
