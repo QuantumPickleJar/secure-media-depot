@@ -28,6 +28,8 @@ db.serialize(() => {
             username TEXT UNIQUE,
             email TEXT, 
             password TEXT
+            isAdmin INTEGER DEFAULT 0,
+            isApproved INTEGER DEFAULT 0
         )
     `);
     db.run(`
