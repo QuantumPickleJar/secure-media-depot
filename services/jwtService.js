@@ -11,7 +11,7 @@ const secretKey = 'your_jwt_secret_key';
  * @param {Object} payload - The payload to be included in the token.
  * @returns {string} - The generated JWT token.
  */
-exports.generateToken = (payload) => {
+function generateToken(payload) {
     return jwt.sign(payload, secretKey, { expiresIn: '1h' });
 };
 
@@ -21,12 +21,10 @@ exports.generateToken = (payload) => {
  * @returns {Object} - The decoded payload if the token is valid.
  * @throws {Error} - If the token is invalid or has expired.
  */
-exports.verifyToken = (token) => {
+function verifyToken(token) {
     return jwt.verify(token, secretKey);
 };
-
-
 module.exports = {
-    generateToken, 
-    verifyToken
+    verifyToken,
+    generateToken
 }

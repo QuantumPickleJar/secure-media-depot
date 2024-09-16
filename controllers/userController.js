@@ -10,12 +10,16 @@ const User = require('../models/userModel');
 exports.registerUser = async (req, res) => {
   const { username, email, password } = req.body;
   try {
-
-    const hashedPassword = await bcrypt.hash(password, 10);
+    // handle first-time admin setup
+    const userCount = User.countUsers();
+    const isAdmin = userCount === 0 ? 1 : 0;      // make 1st user an admin
+    const isApproved = userCount === 0 ? 1 : 0;   // auto-approved first admin
     
-    const user = User.create(username, email, password);
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const user = await User.create(username, email, hashedPassword, isAdmin, isApproved);
     res.status(201).json({
-      message: 'User successfully registered!', user});
+      message: 'User successfully registered!', user
+    });
     
   } catch (err) {
     if (err.code === 'SQLITE_CONSTRAINT') { // on unique ID collisions:
@@ -45,4 +49,4 @@ exports.getUserProfile = async (req, res) => {
   }
 };
 
-// TODO: delete user, update user profile
+// TODO: delete user, update user profile, profile page
