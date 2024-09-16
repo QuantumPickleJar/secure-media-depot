@@ -4,7 +4,7 @@ const userController = require('../controllers/userController');
 const authenticateJWT = require('../auth/authMiddleware');
 
 
-router.post('/login', userController.logout);
+// router.post('/login', userController.);
 
 /**
  * Route for user registration.
