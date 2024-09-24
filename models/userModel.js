@@ -57,19 +57,17 @@ User.findByUsername = (username) => {
  *
  * @returns {Promise<number>} A promise that resolves to the number of users.
  */
-User.countUsers = () => {
+exports.countUsers = () => {
     return new Promise((resolve, reject) => {
-        db.get(
-            `SELECT COUNT(*) as count FROM users`,
-            (err, row) => {
-                if (err) {
-                    reject(err);
-                } else {
-                    resolve(row.count);
-                }
-            }
-        );
+      db.get('SELECT COUNT(*) as userCount FROM users', [], (err, row) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(row.userCount);
+        }
+      });
     });
-}
+  };
+  
 
 module.exports = User;
