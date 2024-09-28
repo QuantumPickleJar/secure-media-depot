@@ -16,10 +16,19 @@ app.use('/',authRoutes);
 app.use('/',fileRoutes);
 app.use('/',userRoutes);
 
-app.use(express.static('public'));
+// app.use(express.static('public'));
+
+// serve static files from our React app
+app.use(express.static(path.join(__dirname, 'frontend/build')));
+
+// unrecognized route handler:
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'frontend/build', 'index.html'));
+});
+
 
 // Start the server
-const PORT = 3000;
+const PORT = process.env.PORT || 8081;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
