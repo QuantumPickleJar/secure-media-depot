@@ -10,27 +10,25 @@ const User = require('../models/userModel');
 exports.registerUser = async (req, res) => {
   const { username, email, password } = req.body;
   try {
-    // handle first-time admin setup
-    const userCount = User.countUsers();
-    const isAdmin = userCount === 0 ? 1 : 0;      // make 1st user an admin
-    const isApproved = userCount === 0 ? 1 : 0;   // auto-approved first admin
-    
+    const userCount = await User.countUsers();  // Assuming this returns the total user count
+    const isAdmin = userCount === 0 ? 1 : 0;      // First user is admin
+    const isApproved = userCount === 0 ? 1 : 0;   // First user is auto-approved
+
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = await User.create(username, email, hashedPassword, isAdmin, isApproved);
     res.status(201).json({
-      message: 'User successfully registered!', user
+      message: 'User successfully registered!',
+      user
     });
-    
   } catch (err) {
-    if (err.code === 'SQLITE_CONSTRAINT') { // on unique ID collisions:
-      res.status(400).json({error: 'Username/email already in use'});
-    }
-    else { 
-      res.status(500).json({error: 'Internal server error!'});
+    if (err.code === 'SQLITE_CONSTRAINT') {
+      res.status(400).json({ error: 'Username/email already in use' });
+    } else {
+      res.status(500).json({ error: 'Internal server error' });
     }
   }
-
 };
+
 
 exports.getUserProfile = async (req, res) => {
   const username = req.user;

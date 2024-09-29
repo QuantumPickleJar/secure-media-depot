@@ -1,39 +1,19 @@
-<!-- public/index.html -->
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Media Server Login</title>
-</head>
-<body>
-  <h1>Login</h1>
-  <form id="login-form">
-    <input type="text" id="username" placeholder="Username" required /><br><br>
-    <input type="password" id="password" placeholder="Password" required /><br><br>
-    <button type="submit">Login</button>
-  </form>
-
-  <script>
-    document.getElementById('login-form').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const username = document.getElementById('username').value;
-      const password = document.getElementById('password').value;
-
-      const response = await fetch('/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password })
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        localStorage.setItem('token', data.token);
-        alert('Login successful');
-        window.location.href = '/upload.html';
-      } else {
-        alert('Invalid credentials');
-      }
-    });
-  </script>
-</body>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#000000" />
+    <meta
+      name="description"
+      content="A media server application with React frontend and Node.js backend."
+    />
+    <title>Media Server</title>
+  </head>
+  <body>
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="root"></div>
+    <!-- React will render components inside the #root div -->
+  </body>
 </html>
