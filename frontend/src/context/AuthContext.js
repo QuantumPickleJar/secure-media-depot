@@ -1,32 +1,34 @@
-import React, { createContext, useState } from 'react';
-
+import React, { createContext, useState, useEffect } from 'react';
 
 export const AuthContext = createContext();
 
 /**
- * Provides authentication functionality to the application.
+ * AuthProvider component to wrap around the app and provide authentication context.
  *
- * @param {Object} props - The component props.
- * @param {ReactNode} props.children - The child components.
- * @returns {ReactNode} The authenticated component tree.
+ * @param {Object} props - Component props.
+ * @param {React.ReactNode} props.children - Child components.
+ * @returns {JSX.Element} AuthProvider component.
  */
 export function AuthProvider({ children }) {
-    const existingTokens = JSON.parse(localStorage.getItem('tokens'));
-    const [authTokens, setAuthTokens] = useState(existingTokens);
+  const [authTokens, setAuthTokens] = useState(() => {
+    const token = localStorage.getItem('tokens');
+    return token ? JSON.parse(token) : null;
+  });
 
-    /**
-     * Sets the authentication tokens and stores them in the local storage.
-     *
-     * @param {Object} data - The authentication tokens.
-     */
-    const setTokens = (data) => {
-        localStorage.setItem('tokens', JSON.stringify(data));
-        setAuthTokens(data);
-    };
+  const logOut = () => {
+    localStorage.removeItem('tokens');
+    setAuthTokens(null);
+  };
 
-    return (
-        <AuthContext.Provider value={{ authTokens, setAuthTokens: setTokens }}>
-            {children}
-        </AuthContext.Provider>
-    );
+  useEffect(() => {
+    if (authTokens) {
+      localStorage.setItem('tokens', JSON.stringify(authTokens));
+    }
+  }, [authTokens]);
+
+  return (
+    <AuthContext.Provider value={{ authTokens, setAuthTokens, logOut }}>
+      {children}
+    </AuthContext.Provider>
+  );
 }
