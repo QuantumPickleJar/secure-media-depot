@@ -27,7 +27,7 @@ db.serialize(() => {
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             username TEXT UNIQUE,
             email TEXT, 
-            password TEXT
+            password TEXT,
             isAdmin INTEGER DEFAULT 0,
             isApproved INTEGER DEFAULT 0
         )
