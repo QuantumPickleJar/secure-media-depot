@@ -8,17 +8,30 @@ const User = require('../models/userModel');
  * @returns {Promise} A promise that resolves when the user is registered.
  */
 exports.registerUser = async (req, res) => {
-  const { username, email, password } = req.body;
-  try {
-    const userCount = await User.countUsers();  // Assuming this returns the total user count
-    const isAdmin = userCount === 0 ? 1 : 0;      // First user is admin
-    const isApproved = userCount === 0 ? 1 : 0;   // First user is auto-approved
-
+  const { username, email, password, adminCode } = req.body;
+  try {    
     const hashedPassword = await bcrypt.hash(password, 10);
+    let isAdmin = 0;
+    let isApproved = 0;
+
+    // check if the user should be an admin
+    if (adminCode && adminCode === process.env.ADMIN_CODE) {
+      isAdmin = 1;
+      isApproved = 1;
+    } else {
+      // WARNING: this should not be used at scale, or for any public-facing apps
+      // if there's *NO* admin code set, authorize this user
+      const numUsers = await User.countUsers();
+      if (numUsers === 0) {
+        isAdmin = 1;
+        isApproved = 1;
+      }
+    }
+
     const user = await User.create(username, email, hashedPassword, isAdmin, isApproved);
     res.status(201).json({
       message: 'User successfully registered!',
-      user
+      user,
     });
   } catch (err) {
     if (err.code === 'SQLITE_CONSTRAINT') {
