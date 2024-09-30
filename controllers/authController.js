@@ -1,7 +1,10 @@
 const bcrypt = require('bcryptjs');
 const db = require('../database/db');
 const jwtService = require('../services/jwtService')
+const { promisify } = require('util');
 
+// instead of using db.get, we can wrap it in a Promise with promisify
+const dbGet = promisify(db.get).bind(db);
 
 /**
  * Authenticates a user and generates a JWT token.
@@ -12,8 +15,11 @@ const jwtService = require('../services/jwtService')
  */
 exports.loginUser = (req, res) => {
   const { username, password } = req.body;
+  // pre-promise wrapping: 
+  // db.get(`SELECT * FROM users WHERE username = ?`, [username], async (err, user) => {
+  try {
+    const user = await dbGet(`SELECT * FROM users WHERE username = ?`, [username]);
 
-  db.get(`SELECT * FROM users WHERE username = ?`, [username], async (err, user) => {
     if (err) {
       return res.status(500).send('Server error');
     }
@@ -26,6 +32,7 @@ exports.loginUser = (req, res) => {
       return res.status(403).send('Your account is awaiting approval.');
     }
 
+    // verify the entered password, and reject if it doesn't match
     try {
       const validPassword = await bcrypt.compare(password, user.password);
       if (!validPassword) {
@@ -35,9 +42,10 @@ exports.loginUser = (req, res) => {
       const token = jwtService.generateToken({ username: user.username, isAdmin: user.isAdmin });
       res.json({ token });
     } catch (error) {
-      res.status(500).send('Server error');
+      console.error('Error logging in:', error);
+      res.status(500).json({'Server error'});
     }
-  });
+  };
 };
 
 /** Note: for jwt, logout can be handled on the client-side by deleting the token.  
