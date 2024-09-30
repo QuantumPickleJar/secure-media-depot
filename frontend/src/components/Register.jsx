@@ -1,11 +1,13 @@
-// frontend/src/components/Register.jsx
 import React, { useState } from 'react';
-import { useHistory } from 'react-router-dom';
+// import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 function Register() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const history = useHistory();
+  // const history = useHistory();      /* for react V5 */ 
+  const navigate = useNavigate();
+
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
@@ -25,7 +27,8 @@ function Register() {
       setSuccess('Registration successful! Please login.');
       setError('');
       // Optionally redirect to login page
-      history.push('/login');
+      // history.push('/login');
+      navigate('/home/');
     } else {
       setError(data.message || 'Registration failed');
       setSuccess('');

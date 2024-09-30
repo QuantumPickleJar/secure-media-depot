@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext.js';
-import MediaItem from './MediaItem'; // You'll create this next
+import MediaItem from './MediaItem.jsx'; // You'll create this next
 
 function Files() {
   const { authTokens } = useContext(AuthContext);

@@ -1,7 +1,9 @@
 import React, { useState, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext.js';
-import { useHistory } from 'react-router-dom';
-/**
+// import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+
+  /**
  * Renders a login form component.
  *
  * @param {Object} props - The component props.
@@ -11,7 +13,8 @@ function Login(props) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const { setAuthTokens } = useContext(AuthContext);
-  const history = useHistory();
+  // const history = useHistory();      /* for react V5 */ 
+  const navigate = useNavigate();
   const [error, setError] = useState('');
 
   
@@ -29,7 +32,8 @@ function Login(props) {
 
     if (response.ok) {
       setAuthTokens(data.token);
-      history.push('/files');
+      // history.push('/files');
+      navigate('/files');
     } else {
       setError(data.message || 'Login failed');
     }

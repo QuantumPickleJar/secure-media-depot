@@ -1,26 +1,18 @@
-// src/components/PrivateRoute.js
 import React, { useContext } from 'react';
-import { Route, Redirect } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext.js';
 
 /**
- * PrivateRoute component.
+ * PrivateRoute component to protect routes.
  *
- * @param {Object} props - The component props.
- * @param {React.Component} props.component - The component to render if the user is authenticated.
- * @param {Object} rest - The remaining props to pass to the Route component.
- * @returns {React.Component} - The rendered component based on the authentication status.
+ * @param {Object} props - Component props.
+ * @param {React.ReactNode} props.children - Child components to render if authenticated.
+ * @returns {React.ReactNode} - Rendered component or redirect.
  */
-function PrivateRoute({ component: Component, ...rest }) {
+function PrivateRoute({ children }) {
   const { authTokens } = useContext(AuthContext);
-  return (
-    <Route
-      {...rest}
-      render={(props) =>
-        authTokens ? <Component {...props} /> : <Redirect to="/login" />
-      }
-    />
-  );
+
+  return authTokens ? children : <Navigate to="/login" replace />;
 }
 
 export default PrivateRoute;
