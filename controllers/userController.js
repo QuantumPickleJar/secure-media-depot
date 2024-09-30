@@ -44,14 +44,15 @@ exports.registerUser = async (req, res) => {
 
 
 exports.getUserProfile = async (req, res) => {
-  const username = req.user;
+  
+  // const username = req.user;
+  const username = req.user.username; // populated from authMiddleware and jwtService
   // try to find the username, error if we can't find them
   try {
-    const user = await User.findByUsername;
+    const user = await User.findByUsername(username);
     if(user) {
       res.json({ username: user.username, email: user.email });
-    }
-    if (err || !user) {
+    } else {
       res.status(404).send('User not found');
     }
   }

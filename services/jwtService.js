@@ -1,4 +1,3 @@
-// services/jwtService.js
 const jwt = require('jsonwebtoken');
 
 
@@ -12,7 +11,12 @@ const secretKey = 'your_jwt_secret_key';
  * @returns {string} - The generated JWT token.
  */
 function generateToken(payload) {
-    return jwt.sign(payload, secretKey, { expiresIn: '1h' });
+   // return jwt.sign(payload, secretKey, { expiresIn: '1h' });
+   return jwt.sign(
+    { username: payload.username, ...payload }, 
+    secretKey,
+    { expiresIn: '1h'}
+   );
 };
 
 /**

@@ -9,7 +9,6 @@
     "nodemon": "^3.1.4",
     "sqlite3": "^5.1.7"
   },
-  
   "scripts": {
     "postinstall": "ln -sfn $(pwd)/public /var/www/html/"
   }
