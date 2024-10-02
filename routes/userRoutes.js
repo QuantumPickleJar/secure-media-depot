@@ -2,9 +2,15 @@ const express = require('express');
 const router = express.Router();
 const userController = require('../controllers/userController');
 const authenticateJWT = require('../auth/authMiddleware');
+const rateLimit = require('express-rate-limit');
 
-
-// router.post('/login', userController.);
+const registrationLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 5,                 // 5 registration attempts per window
+    message: 'Too many accounts created from this IP, please try again after 15 minutes',
+    standardHeaders: true, // Return rate limit info in the `RateLimit-` headers
+    legacyHeaders: false, // Disable the `X-RateLimit-` headers
+});
 
 /**
  * Route for user registration.
@@ -28,4 +34,7 @@ router.post('/register', userController.registerUser);
  */
 router.get('/profile', authenticateJWT, userController.getUserProfile);
 
-module.exports = router;
+module.exports = {
+    router,
+    registrationLimiter
+};

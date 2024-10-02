@@ -10,11 +10,12 @@ app.use(cors());
 
 const authRoutes = require('./routes/authRoutes');
 const fileRoutes = require('./routes/fileRoutes');
-const userRoutes = require('./routes/userRoutes');
+// to use a rate limiter, we leverage the constructor for the Router
+const { router: userRoutes, registrationLimiter} = require('./routes/userRoutes');
 
 app.use('/',authRoutes);
 app.use('/',fileRoutes);
-app.use('/',userRoutes);
+app.use('/api/users/register', registrationLimiter, userRoutes);
 
 // app.use(express.static('public'));
 

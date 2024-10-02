@@ -13,7 +13,7 @@ const dbGet = promisify(db.get).bind(db);
  * @param {string} password - The password of the user.
  * @returns {string} The generated JWT token.
  */
-exports.loginUser = (req, res) => {
+exports.loginUser = async (req, res) => {
   const { username, password } = req.body;
   // pre-promise wrapping: 
   // db.get(`SELECT * FROM users WHERE username = ?`, [username], async (err, user) => {
@@ -33,19 +33,17 @@ exports.loginUser = (req, res) => {
     }
 
     // verify the entered password, and reject if it doesn't match
-    try {
-      const validPassword = await bcrypt.compare(password, user.password);
-      if (!validPassword) {
-        return res.status(400).send('Invalid username or password');
-      }
-
-      const token = jwtService.generateToken({ username: user.username, isAdmin: user.isAdmin });
-      res.json({ token });
-    } catch (error) {
-      console.error('Error logging in:', error);
-      res.status(500).json({'Server error'});
+    const validPassword = await bcrypt.compare(password, user.password);
+    if (!validPassword) {
+      return res.status(400).send('Invalid username or password');
     }
-  };
+
+    const token = jwtService.generateToken({ username: user.username, isAdmin: user.isAdmin });
+    res.json({ token });
+  } catch (error) {
+    console.error('Error logging in:', error);
+    res.status(500).json({ error: 'Server error'});
+  }
 };
 
 /** Note: for jwt, logout can be handled on the client-side by deleting the token.  
