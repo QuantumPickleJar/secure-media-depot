@@ -1,22 +1,19 @@
 const jwt = require('jsonwebtoken');
+require('dotenv').config();
 
-
-// TODO: replace with dotENV powered loading
-// const secretKey = process.env.JWT_SECRET_KEY;
-const secretKey = 'your_jwt_secret_key'; 
+const secretKey = process.env.JWT_SECRET_KEY;
 
 /**
- * Generates a JWT token with the given payload.
+ * Generates a JWT token with the given payload
  * @param {Object} payload - The payload to be included in the token.
  * @returns {string} - The generated JWT token.
  */
 function generateToken(payload) {
-   // return jwt.sign(payload, secretKey, { expiresIn: '1h' });
-   return jwt.sign(
-    { username: payload.username, ...payload }, 
-    secretKey,
-    { expiresIn: '1h'}
-   );
+   return jwt.sign(payload, secretKey, { expiresIn: '1h' });
+//    return jwt.sign(
+//   return jwt.sign(payload, secretKey, { expiresIn: '1h' });    secretKey,
+//     { expiresIn: '1h'}
+//    );
 };
 
 /**

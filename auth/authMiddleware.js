@@ -21,28 +21,20 @@ const authenticateJWT = (req, res, next) => {
   }
 };
 
+/**
+ * Middleware to authorize admin users.
+ *
+ * @param {Object} req 
+ * @param {Object} res 
+ * @param {Function} next -  next middleware function.
+ */
 const authorizeAdmin = (req, res, next) => {
-    const authHeader = req.headers.authorization;
-
-    if (authHeader) {
-        // extract the token from the header
-        const token = authHeader.split(' ')[1];
-
-        // figure out where the user can go, based on their token
-        try {
-            const user = jwtService.verifyToken(token);
-            if (user.isAdmin) {
-                req.user = user;
-                next();
-            } else {
-                res.status(403).send('Access denied: you are not an admin');
-            }
-        } catch (err) {
-            res.status(403).send('Invalid token');
-        }
+    if (req.user && user.isAdmin) {
+        // req.user = user;
+        next();
     } else {
-        res.status(403).send('No token provided');
+        res.status(403).send('Access denied: admin access only');
     }
 }
 
-module.exports = authenticateJWT, authorizeAdmin;
+module.exports = { authenticateJWT, authorizeAdmin };
