@@ -52,7 +52,12 @@ exports.registerUser = async (req, res) => {
   }
 };
 
-
+/**
+ * Get user profile information.
+ *
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ */
 exports.getUserProfile = async (req, res) => {
   
   // const username = req.user;
@@ -61,12 +66,13 @@ exports.getUserProfile = async (req, res) => {
   try {
     const user = await User.findByUsername(username);
     if(user) {
-      res.json({ username: user.username, email: user.email });
+      res.json({ username: user.username, email: user.email, isAdmin: user.isAdmin });
     } else {
-      res.status(404).send('User not found');
+      res.status(404).json({error: 'User not found'});
     }
   }
   catch {
+    console.error('Error fetching user profile:', err);
     res.status(500).json({ error: 'Internal server error!'});
   }
 };
