@@ -3,14 +3,15 @@ const User = require('../models/userModel');
 
 /**
  * Register a new user.
- * @param {string} username - The username of the user.
- * @param {string} password - The password of the user.
- * @returns {Promise} A promise that resolves when the user is registered.
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
  */
 exports.registerUser = async (req, res) => {
   const { username, email, password, adminCode } = req.body;
   try {    
-    const hashedPassword = await bcrypt.hash(password, 10);
+    // without requiring an admin code, we can do a two-in-one and admin-ify the first 
+    // user that's added.
+    const numUsers = await User.countUsers();
     let isAdmin = 0;
     let isApproved = 0;
 
@@ -18,22 +19,31 @@ exports.registerUser = async (req, res) => {
     if (adminCode && adminCode === process.env.ADMIN_CODE) {
       isAdmin = 1;
       isApproved = 1;
-    } else {
-      // WARNING: this should not be used at scale, or for any public-facing apps
-      // if there's *NO* admin code set, authorize this user
-      const numUsers = await User.countUsers();
-      if (numUsers === 0) {
+    } else if (numUsers === 0) {
         isAdmin = 1;
         isApproved = 1;
       }
+      else {
+        // standard users are assumed anonymous (i.e a QR code at a local cafe)
+        // and require approval for any sort of access.
+        isApproved = 0;
     }
 
+    // With the role sorted out, we can proceed with creating the user 
+    const hashedPassword = await bcrypt.hash(password, 10);
     const user = await User.create(username, email, hashedPassword, isAdmin, isApproved);
     res.status(201).json({
       message: 'User successfully registered!',
-      user,
+      user: {
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        isAdmin: user.isAdmin,
+        isApproved: user.isApproved,
+      },
     });
-  } catch (err) {
+  } catch (err) {     // print an error here for easier stack trace readability
+    console.error('Registration error:', err);
     if (err.code === 'SQLITE_CONSTRAINT') {
       res.status(400).json({ error: 'Username/email already in use' });
     } else {
