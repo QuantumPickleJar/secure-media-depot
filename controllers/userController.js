@@ -1,5 +1,9 @@
 const bcrypt = require('bcryptjs');
 const User = require('../models/userModel');
+const dotenv = require('dotenv');
+
+dotenv.config();    // load environment variables
+
 
 /**
  * Register a new user.
@@ -20,6 +24,7 @@ exports.registerUser = async (req, res) => {
       isAdmin = 1;
       isApproved = 1;
     } else if (numUsers === 0) {
+        // first user is an admin
         isAdmin = 1;
         isApproved = 1;
       }
@@ -27,11 +32,12 @@ exports.registerUser = async (req, res) => {
         // standard users are assumed anonymous (i.e a QR code at a local cafe)
         // and require approval for any sort of access.
         isApproved = 0;
-    }
+      }
 
     // With the role sorted out, we can proceed with creating the user 
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = await User.create(username, email, hashedPassword, isAdmin, isApproved);
+
     res.status(201).json({
       message: 'User successfully registered!',
       user: {
