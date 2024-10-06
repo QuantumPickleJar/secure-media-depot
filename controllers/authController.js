@@ -2,6 +2,7 @@ const bcrypt = require('bcryptjs');
 const db = require('../database/db');
 const jwtService = require('../services/jwtService')
 const { promisify } = require('util');
+const User = require('../models/userModel');
 
 // instead of using db.get, we can wrap it in a Promise with promisify
 const dbGet = promisify(db.get).bind(db);
@@ -18,11 +19,9 @@ exports.loginUser = async (req, res) => {
   // pre-promise wrapping: 
   // db.get(`SELECT * FROM users WHERE username = ?`, [username], async (err, user) => {
   try {
-    const user = await dbGet(`SELECT * FROM users WHERE username = ?`, [username]);
-
-    if (err) {
-      return res.status(500).send('Server error');
-    }
+    
+    // const user = await dbGet(`SELECT * FROM users WHERE username = ?`, [username]);
+    const user = await User.findByUsername(username);
 
     if (!user) {
       return res.status(400).send('Invalid username or password');
