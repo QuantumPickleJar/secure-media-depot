@@ -1,12 +1,10 @@
 import React, { useState, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext.js';
-// import { useHistory } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 
   /**
  * Renders a login form component.
  *
- * @param {Object} props - The component props.
  * @returns {JSX.Element} The login form component.
  */
 function Login(props) {
@@ -20,24 +18,28 @@ function Login(props) {
   
   const handleSubmit = async (e) => {
     e.preventDefault();
+    try {
 
-    // Replace with your actual login API endpoint
-    const response = await fetch('/api/auth/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username, password }),
-    });
-
-    const data = await response.json();
-
-    if (response.ok) {
-      setAuthTokens(data.token);
-      // history.push('/files');
-      navigate('/files');
-    } else {
-      setError(data.message || 'Login failed');
-    }
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password }),
+      });
+  
+      const data = await response.json();
+  
+      if (response.ok) {
+        setAuthTokens(data.token);
+        // history.push('/files');
+        navigate('/files');
+      } else {
+        setError(data.message || 'Login failed');
+      }
+    } catch (err) {
+    console.error('Error logging in:', err);
+    setError('An error occurred during the login process.');
   };
+}
 
   return (
     <div>
