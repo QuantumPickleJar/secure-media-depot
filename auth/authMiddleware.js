@@ -29,8 +29,7 @@ const authenticateJWT = (req, res, next) => {
  * @param {Function} next -  next middleware function.
  */
 const authorizeAdmin = (req, res, next) => {
-    if (req.user && user.isAdmin) {
-        // req.user = user;
+    if (req.user && req.user.isAdmin) {
         next();
     } else {
         res.status(403).send('Access denied: admin access only');
