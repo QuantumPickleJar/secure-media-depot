@@ -12,10 +12,9 @@ const User = {};
  * @param {string} password - The password of the user.
  * @returns {Promise<Object>} A promise that resolves to the created user object.
  */
-User.create = async (username, email, password, isAdmin = 0, isApproved = 0) => {
+User.create = (username, email, password, isAdmin = 0, isApproved = 0) => {
+    return new Promise(async (resolve, reject) => {    
     const hashedPassword = await bcrypt.hash(password, 10);
-
-    return new Promise((resolve, reject) => {
         db.run(
             `INSERT INTO users (username, email, password, isAdmin, isApproved) VALUES (?, ?, ?)`,
             [username, email, hashedPassword, isAdmin, isApproved],
