@@ -4,7 +4,14 @@ const userController = require('../controllers/userController');
 const authenticateJWT = require('../auth/authMiddleware');
 const rateLimit = require('express-rate-limit');
 
-
+// Rate limiter for registration
+const registrationLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 5,
+    message: 'Too many accounts created from this IP, please try again after 15 minutes',
+    standardHeaders: true,
+    legacyHeaders: false,
+  });
 
 /**
  * Route for user registration.
@@ -14,7 +21,7 @@ const rateLimit = require('express-rate-limit');
  * @param {function} userController.registerUser 
  * The controller function for user registration.
  */
-router.post('/register', userController.registerUser);
+router.post('/register', registrationLimiter, userController.registerUser);
 
 /**
  * Route for getting user profile.

@@ -6,23 +6,16 @@ require('dotenv').config();
 app.use(express.json());
 app.use(cors());
 
-const registrationLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 5,                 // 5 registration attempts per window
-  message: 'Too many accounts created from this IP, please try again after 15 minutes',
-  standardHeaders: true, // Return rate limit info in the `RateLimit-` headers
-  legacyHeaders: false, // Disable the `X-RateLimit-` headers
-});
-
 const authRoutes = require('./routes/authRoutes');
 const fileRoutes = require('./routes/fileRoutes');
 
 // to use a rate limiter, we leverage the constructor for the Router
-const { router: userRoutes, registrationLimiter} = require('./routes/userRoutes');
+const userRoutes = require('./routes/userRoutes');
 
-app.use('/',authRoutes);
-app.use('/',fileRoutes);
-app.use('/api/users/register', registrationLimiter, userRoutes);
+app.use('/api/auth',authRoutes);
+app.use('/api/files',fileRoutes);
+app.use('/api/users', userRoutes);
+// app.use('/api/users/register', registrationLimiter, userRoutes);
 
 // app.use(express.static('public'));
 
