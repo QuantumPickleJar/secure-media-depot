@@ -1,5 +1,3 @@
-// routes/fileRoutes.js
-
 /**
  * Express router for handling file routes.
  * @module routes/fileRoutes
@@ -8,6 +6,7 @@
 const express = require('express');
 const router = express.Router();
 const authenticateJWT = require('../auth/authMiddleware');
+const authorizeAdmin = require('../auth/authMiddleware').authorizeAdmin;
 const fileController = require('../controllers/fileController');
 const upload = require('../config/multer');
 

@@ -35,6 +35,4 @@ router.post('/register', registrationLimiter, userController.registerUser);
  */
 router.get('/profile', authenticateJWT, userController.getUserProfile);
 
-module.exports = {
-    router
-};
+module.exports = router;
