@@ -77,10 +77,10 @@ exports.getUserProfile = async (req, res) => {
       res.status(404).json({error: 'User not found'});
     }
   }
-  catch {
+  catch (err) {
     console.error('Error fetching user profile:', err);
     res.status(500).json({ error: 'Internal server error!'});
   }
 };
 
-// TODO: delete user, update user profile, profile page
+// TODO: delete user, update user profile, profile page 
