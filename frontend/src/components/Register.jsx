@@ -7,7 +7,6 @@ function Register() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [adminCode, setAdminCode] = useState('');
-  
   const navigate = useNavigate();
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -16,7 +15,8 @@ function Register() {
     e.preventDefault();
     
     try {
-      const response = await fetch('/api/auth/register', {
+      // the api endpoint in server.js lists /api/users/register
+      const response = await fetch('/api/users/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, email, password, adminCode }),
@@ -27,11 +27,11 @@ function Register() {
       if (response.ok) {
         setSuccess('Registration successful! Please login.');
         setError('');
-        // Optionally redirect to login page
-        // history.push('/login');
-        navigate('/home/');
+        // redirect to login page
+        // TODO: login automatically after registration
+        navigate('/login/');
       } else {
-        setError(data.message || 'Registration failed');
+        setError(data.error || 'Registration failed');
         setSuccess('');
       }
     }
@@ -39,9 +39,9 @@ function Register() {
       // TODO: find out and explain why we setSuccess after setError (probably a graceful exit)
       console.error('Registration error:', err);
       setError('An error occurred during registration.');
-      setSuccess('');
     }
   };
+
   return (
     <div>
       <h2>Register</h2>
