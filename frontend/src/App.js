@@ -4,7 +4,7 @@ import Home from './components/Home';
 import Login from './components/Login';
 import Register from './components/Register';
 import Upload from './components/Upload';
-import Files from './components/Files';
+import Files from './components/File';
 import PrivateRoute from './components/PrivateRoute';
 import { AuthContext } from './context/AuthContext';
 import { useContext } from 'react';
