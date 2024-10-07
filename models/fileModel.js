@@ -66,4 +66,22 @@ File.search = (keyword) => {
   });
 };
 
+
+/**
+ * Retrieves all files from the database.
+ *
+ * @returns {Promise<Array>} An array of file objects.
+ */
+File.getAll = () => {
+  return new Promise((resolve, reject) => {
+      db.all(`SELECT * FROM files`, [], (err, rows) => {
+          if (err) {
+              reject(err);
+          } else {
+              resolve(rows);
+          }
+      });
+  });
+};
+
 module.exports = File;
