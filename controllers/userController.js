@@ -1,3 +1,8 @@
+/**
+ * @modules controllers/userController
+ * Handles server behavior for requests and responses involved with
+ * user registration and profile management
+ */
 const bcrypt = require('bcryptjs');
 const User = require('../models/userModel');
 const dotenv = require('dotenv');

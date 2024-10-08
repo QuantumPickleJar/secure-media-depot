@@ -1,0 +1,32 @@
+const express = require('express');
+const router = express.Router();
+const adminController = require('../controllers/adminController');
+const { authenticateJWT, authorizeAdmin } = require('../auth/authMiddleware');
+
+/**
+ * Apply authentication and admin authorization middleware to all routes in this router.
+ */
+router.use(authenticateJWT);
+router.use(authorizeAdmin);
+
+/**
+ * Route to approve a user.
+ * @route PATCH /api/admin/approve/:userId
+ */
+router.patch('/approve/:userId', adminController.approveUser);
+
+/**
+ * Route to get all users.
+ * @route GET /api/admin/users
+ */
+router.get('/users', adminController.getAllUsers);
+
+// Additional admin routes can be added here
+
+// if I wanted to add a dashboard, it would probably make
+// more sense to do one of the following instead of 
+// defining it here:
+// - writing a `dashboardService` (flaw: more work than probably needed)
+// - move proposed getDashboard func to userRoutes and have the behavior 
+// handled in userController (probably the ideal way to go, but these are the only 2 ideas I came up with)
+module.exports = router;

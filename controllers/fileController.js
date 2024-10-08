@@ -1,3 +1,7 @@
+/**
+ * @module controller/fileController
+ * Handles serving and storage of files to logged-in users
+ */
 const db = require('../database/db');
 const path = require('path');
 const File = require('../models/fileModel');

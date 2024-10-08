@@ -1,3 +1,7 @@
+/**
+ * @module routes/authRoutes
+ * handles routes for authentication (/login, /logout).
+ */
 const express = require('express');
 const router = express.Router();
 const authController = require('../controllers/authController');

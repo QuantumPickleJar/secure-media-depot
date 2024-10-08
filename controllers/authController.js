@@ -1,3 +1,8 @@
+/**
+ * @module controllers/authController
+ * Responsible for defining the server's response to request and responses
+ * related to authentication (logging in/out)
+ */
 const bcrypt = require('bcryptjs');
 const jwtService = require('../services/jwtService');
 const User = require('../models/userModel');

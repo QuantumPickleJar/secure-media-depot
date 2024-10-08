@@ -1,3 +1,13 @@
+/**
+ * @module routes/userRoutes
+ * Responsible for defining the server's response to request and responses
+ * related to user data. 
+ * 
+ * Operations include handling: 
+ * - new account registration requests
+ * - modifying a user's own profile information
+ * - (once implemented) through a to-be-implemented service, notify the user
+ */
 const express = require('express');
 const router = express.Router();
 const userController = require('../controllers/userController');

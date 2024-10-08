@@ -1,3 +1,7 @@
+/**
+ * @module services/jwtService
+ * Responsible for generating and verifying JWT tokens
+ */
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 

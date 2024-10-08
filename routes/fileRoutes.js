@@ -1,6 +1,10 @@
 /**
- * Express router for handling file routes.
  * @module routes/fileRoutes
+ * Routes for file operations /upload,
+ * Operation        | Path
+ *  list all files  | /,
+ *  file by id      | /:id, 
+ *  search for file | /search.
  */
 
 const express = require('express');

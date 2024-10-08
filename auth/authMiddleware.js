@@ -1,3 +1,7 @@
+/**
+ * @module auth/authMiddleware
+ * Contains functions critical to user authentication and authorization
+ */
 const jwtService = require('../services/jwtService');
 
 /**
