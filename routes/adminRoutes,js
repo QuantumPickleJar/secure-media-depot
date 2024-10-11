@@ -1,3 +1,8 @@
+/**
+ * @module routes/adminRoutes
+ * Defines routes that are exclusive to admin operations, 
+ * protected by authentication and authorization middleware.
+ */
 const express = require('express');
 const router = express.Router();
 const adminController = require('../controllers/adminController');
