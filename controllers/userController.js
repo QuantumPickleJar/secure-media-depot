@@ -75,7 +75,7 @@ exports.getUserProfile = async (req, res) => {
   const username = req.user.username; // populated from authMiddleware and jwtService
   // try to find the username, error if we can't find them
   try {
-    const user = await User.findByUsername(username);
+    const user = await User.getByUsername(username);
     if(user) {
       res.json({ username: user.username, email: user.email, isAdmin: user.isAdmin });
     } else {

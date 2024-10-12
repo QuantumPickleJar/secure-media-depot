@@ -17,7 +17,7 @@ exports.loginUser = async (req, res) => {
   const { username, password } = req.body;
 
   try {
-    const user = await User.findByUsername(username);
+    const user = await User.getByUsername(username);
 
     if (!user) {
       return res.status(400).send('Invalid username or password');

@@ -18,7 +18,7 @@ router.use(authorizeAdmin);
  * Route to approve a user.
  * @route PATCH /api/admin/approve/:userId
  */
-router.patch('/approve/:userId', adminController.approveUser);
+router.patch('/approve/:userId', adminController.approveNewUser);
 
 /**
  * Route to get all users.
@@ -27,6 +27,22 @@ router.patch('/approve/:userId', adminController.approveUser);
 router.get('/users', adminController.getAllUsers);
 
 // Additional admin routes can be added here
+
+
+/**
+ * Route delete a single user by their Id.
+ * @todo ideally, we should notify the user when their account is deleted
+ * @route GET /api/user/userId
+ */
+router.get('/user/:userId', adminController.getUserById);
+
+
+// TODO: 
+
+// some of these involve other services.  
+// deleteFile
+
+// modifyAccesss
 
 // if I wanted to add a dashboard, it would probably make
 // more sense to do one of the following instead of 

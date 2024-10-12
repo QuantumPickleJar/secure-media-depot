@@ -41,7 +41,7 @@ User.create = (username, email, password, isAdmin = 0, isApproved = 0) => {
  * @param {string} username - The username of the user to find.
  * @returns {Promise<Object>} A promise that resolves to the found user object, or null if not found.
  */
-User.findByUsername = (username) => {
+User.getByUsername = (username) => {
     return new Promise((resolve, reject) => {
         db.get(
             `SELECT * FROM users WHERE username = ?`,
@@ -58,11 +58,31 @@ User.findByUsername = (username) => {
 };
 
 /**
+ * Retrieves a user from the database by their unique userId
+ * @param {string} userId 
+ * @returns 
+ */
+User.getUserById = (userId) => {
+  return new Promise((resolve, reject) => {
+    db.get(
+        `SELECT * FROM users WHERE id = ?`,[userId], (err, user) => {
+            if (err) {
+                // console.error('Failed to find user with given id:', err);
+                reject(err);
+            } else {
+                resolve(user);
+            }
+        }
+    );
+  });
+}
+
+/**
  * Counts the number of users.
  *
  * @returns {Promise<number>} A promise that resolves to the number of users.
  */
-exports.countUsers = () => {
+User.countUsers = () => {
     return new Promise((resolve, reject) => {
       db.get('SELECT COUNT(*) as userCount FROM users', [], (err, row) => {
         if (err) {
@@ -76,7 +96,7 @@ exports.countUsers = () => {
 
   
 // TODO: finish implementing
-// exports.getAllUsers= () => {
+// User.getAllUsers= () => {
 //     // wrap in a promise to keep the UX flow smoother
 //     return new Promise(async (resolve, reject) => {
 
@@ -90,4 +110,8 @@ exports.countUsers = () => {
 //     });
   
 // }
+
+
+
+
 module.exports = User;
