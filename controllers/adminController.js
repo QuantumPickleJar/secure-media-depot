@@ -1,3 +1,4 @@
+const User = require('../models/userModel');
 /**
  * @module controllers/adminController
  * Responsible for defining the server's response to requests/responses that
@@ -12,8 +13,25 @@
  * 
  */
 // user approval
+exports.approveUser = async (req, res) => { 
+    const { userId }= req.params;
+    try {
+        const result = await User.approveUser(userId);
+    } catch(err) {
+        console.error('Error approving user:', err);
+        res.status(500).json({error: 'Internal server error'});
+    }
+}
 
 
+exports.getAllUsers = async (req, res) => {
+    try {
+        const result = await User.getAllUsers();
+    } catch(err) {
+        console.error('Error fetching users:', err);
+        res.status(500).json({error: 'Internal server error'});
+    }
+}
 // user management
 
 

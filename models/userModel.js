@@ -1,4 +1,10 @@
-// models/userModel.js
+/**
+ * @module models/userModel.js
+ * 
+ * @todo Abstract SQL calls with a dedicated service. 
+ * This might make sense to refactor into authService?
+ * 
+ */
 const db = require('../database/db');
 const bcrypt = require('bcryptjs');
 
@@ -67,6 +73,21 @@ exports.countUsers = () => {
       });
     });
   };
-  
 
+  
+// TODO: finish implementing
+// exports.getAllUsers= () => {
+//     // wrap in a promise to keep the UX flow smoother
+//     return new Promise(async (resolve, reject) => {
+
+//       db.get('SELECT * FROM users', [] (err,row) => {
+//         if (err) {
+//           reject(err);
+//         } else {
+//           resolve(row.userCount);
+//         }
+//       });
+//     });
+  
+// }
 module.exports = User;
