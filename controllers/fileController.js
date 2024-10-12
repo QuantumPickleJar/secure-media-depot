@@ -6,26 +6,14 @@ const File = require('../models/fileModel');
  * @param {Object} req - The request object.
  * @param {Object} res - The response object.
  */
-exports.uploadFile = async (req, res) => {
-    // find out if the file is one that can be streamed
-    // const isStreamable = req.body.isStreamable || 0;
-    // db.run(
-    //     `INSERT INTO files (file_name, original_name, uploader, upload_date, filepath, is_streamable)
-    //     VALUES (?, ?, ?, ?, ?, ?)`,
-    //     [req.file_name, req.original_name, req.uploader, req.upload_date, req.file.path, isSatreamable],
-    //     (err) => {
-    //       if (err) {
-    //           return res.status(500).send('Error storing file metadata');
-    //       }
-    //     res.status(201).send('File uploaded successfully');
-    //     }
-    // );
-    
+
+exports.uploadFile = async (req, res) => {   
+    console.log('Preparing to upload file...');
     // Step one is capturing the file's metadata from the request
     const fileData = {
-      file_name: req.body.file_name,
-      original_name: req.body.original_name,
-      uploader: req.user.username,
+      file_name: req.file.filename,            // req.file
+      original_name: req.file.originalname,    // req.file
+      uploader: req.user.username,              // req.user
       upload_date: new Date(),  // might need to handle this server-side instead?
       file_path: req.file.path,
       is_streamable: req.body.is_streamable ? 1 : 0
@@ -100,11 +88,18 @@ exports.searchFiles = async (req, res) => {
  */
 exports.getFileById = async (req, res) => {
   try {
+<<<<<<< Updated upstream
     const file = File.findById(req.params.id);
     if (!file) {
+=======
+    const file = await File.findById(req.params.id);
+    
+    if (!file) {                        // Make sure the file exists first
+>>>>>>> Stashed changes
       return res.status(404).json({error: 'File not found'});
     }
     
+    // 
     const filePath = path.resolve(file.file_path);
     if (file.is_streamable) {           // Stream the file if it's compatible
       const stat = fs.statSync(filePath);
