@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Media Depot - Video Player</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        h1 {
+            color: #333;
+        }
+        .container {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        video {
+            max-width: 100%;
+            margin-top: 20px;
+        }
+        .error {
+            color: #d32f2f;
+            background-color: #ffeaea;
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 10px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Secure Media Depot - Video Player</h1>
+        
+        <div class="form-group">
+            <label for="token">JWT Token:</label>
+            <input type="text" id="token" placeholder="Paste your JWT token here">
+        </div>
+        
+        <div class="form-group">
+            <label for="fileId">File ID:</label>
+            <input type="text" id="fileId" placeholder="Enter the file ID">
+        </div>
+        
+        <button onclick="loadVideo()">Load Video</button>
+        
+        <div id="error" class="error"></div>
+        
+        <div id="videoContainer">
+            <video id="videoPlayer" controls>
+                Your browser does not support the video tag.
+            </video>
+        </div>
+    </div>
+    
+    <script>
+        function loadVideo() {
+            const token = document.getElementById('token').value.trim();
+            const fileId = document.getElementById('fileId').value.trim();
+            const errorDiv = document.getElementById('error');
+            const videoPlayer = document.getElementById('videoPlayer');
+            
+            // Reset error
+            errorDiv.style.display = 'none';
+            errorDiv.textContent = '';
+            
+            // Validate inputs
+            if (!token) {
+                errorDiv.textContent = 'Please enter a JWT token';
+                errorDiv.style.display = 'block';
+                return;
+            }
+            
+            if (!fileId) {
+                errorDiv.textContent = 'Please enter a file ID';
+                errorDiv.style.display = 'block';
+                return;
+            }
+            
+            // Set up video source with authorization header
+            const videoUrl = `/api/files/${fileId}`;
+            
+            // Create MediaSource and add to video element
+            videoPlayer.src = videoUrl;
+            
+            // Set up fetch options with the JWT token
+            videoPlayer.fetchOptions = {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            };
+            
+            // Override the fetch method used by the video element
+            const originalFetch = window.fetch;
+            window.fetch = function(url, options) {
+                if (url.includes(`/api/files/${fileId}`)) {
+                    options = {
+                        ...options,
+                        headers: {
+                            ...options.headers,
+                            'Authorization': `Bearer ${token}`
+                        }
+                    };
+                }
+                return originalFetch.call(this, url, options);
+            };
+            
+            // Handle errors
+            videoPlayer.onerror = function() {
+                errorDiv.textContent = 'Error loading the video. Please check the file ID and token.';
+                errorDiv.style.display = 'block';
+            };
+            
+            // Load and play the video
+            videoPlayer.load();
+        }
+    </script>
+</body>
+</html>
