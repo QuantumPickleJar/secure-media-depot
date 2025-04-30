@@ -1,0 +1,157 @@
+# Secure Media Depot (Python)
+
+A secure media storage and streaming platform built with Flask, designed with object-oriented principles for maintainability and scalability.
+
+## Features
+
+- **User Authentication**: JWT-based authentication with role-based access control
+- **Media Streaming**: Robust video streaming with byte range support for seeking functionality
+- **File Management**: Upload, search, retrieve, and delete various types of media files
+- **User Management**: Admin controls for user approval and management
+- **Security**: Password hashing, secure file handling, and protected routes
+
+## Architecture
+
+The application is built using a layered architecture pattern:
+
+- **Controllers**: Handle HTTP requests/responses and business logic
+- **Models**: SQLAlchemy ORM classes for data persistence
+- **Services**: Reusable components like JWT authentication
+- **Middleware**: Cross-cutting concerns like authentication
+
+## Getting Started
+
+### Prerequisites
+
+- Python 3.8 or higher
+- pip package manager
+- Virtual environment (recommended)
+
+### Installation
+
+1. Clone the repository
+   ```bash
+   git clone https://github.com/yourusername/secure-media-depot.git
+   cd secure-media-depot/python
+   ```
+
+2. Create and activate a virtual environment
+   ```bash
+   python -m venv venv
+   # On Windows
+   venv\Scripts\activate
+   # On macOS and Linux
+   source venv/bin/activate
+   ```
+
+3. Install dependencies
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+4. Create a `.env` file in the project root with the following variables:
+   ```
+   SECRET_KEY=your_secret_key_here
+   JWT_SECRET_KEY=your_jwt_secret_here
+   ADMIN_CODE=admin123
+   UPLOAD_FOLDER=uploads
+   DATABASE_URL=sqlite:///media.db
+   PORT=8081
+   ```
+
+5. Create the uploads directory
+   ```bash
+   mkdir uploads
+   ```
+
+### Running the Application
+
+1. Start the server
+   ```bash
+   python run.py
+   ```
+
+2. The API will be available at `http://localhost:8081`
+
+3. For testing the video player, navigate to `http://localhost:8081/player`
+
+## API Documentation
+
+### Authentication
+
+- `POST /api/auth/login` - Login with username and password
+- `POST /api/auth/logout` - Logout (clears token on client)
+
+### User Management
+
+- `POST /api/users/register` - Register a new user
+- `GET /api/users/profile` - Get current user profile
+
+### File Operations
+
+- `POST /api/files/upload` - Upload a file
+- `GET /api/files/list` - Get list of all files
+- `GET /api/files/{id}` - Get a specific file (stream or download)
+- `DELETE /api/files/{id}` - Delete a file
+- `GET /api/files/search?query={term}` - Search for files
+
+### Admin Operations
+
+- `GET /api/admin/users` - Get all users
+- `GET /api/admin/users/pending` - Get pending users
+- `GET /api/admin/users/registered` - Get registered users
+- `PATCH /api/admin/approve/{userId}` - Approve a user
+- `PATCH /api/admin/deny/{userId}` - Deny a user
+- `GET /api/admin/user/{userId}` - Get a specific user
+
+## Testing
+
+The project includes a testing guide with a Postman collection for API testing:
+
+```bash
+python postman_testing_guide.py
+```
+
+This will generate helpful instructions and a Postman collection in the `postman/` directory that you can import into Postman.
+
+## Security Considerations
+
+- JWT tokens expire after 1 hour for security
+- Passwords are hashed using bcrypt
+- Input validation is performed on all inputs
+- File names are sanitized to prevent path traversal attacks
+- Admin routes are protected with role-based authorization
+- Content-Type is validated for uploads
+
+## Project Structure
+
+```
+python/
+├── app.py                  # Main Flask application
+├── run.py                  # Application runner
+├── requirements.txt        # Python dependencies
+├── .env                    # Environment variables (not tracked by git)
+├── auth/                   # Authentication middleware
+├── controllers/            # API controllers
+├── models/                 # Database models
+├── services/               # Reusable services
+├── templates/              # HTML templates
+└── uploads/                # Upload directory for files
+```
+
+## Contributing
+
+1. Create a new branch for your feature
+2. Implement your changes
+3. Write or update tests
+4. Submit a pull request
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## Troubleshooting
+
+- If you experience database issues, try deleting the `media.db` file and restart the application to recreate it
+- For file upload issues, check that the `uploads` directory exists and is writable
+- If authentication fails, ensure your JWT_SECRET_KEY is properly set in `.env`
