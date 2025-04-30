@@ -79,14 +79,21 @@ def create_app(config=None):
     def health_check():
         return {'status': 'ok'}, 200
     
-    # Root route redirects to /api
+    # Frontend HTML routes
     @app.route('/')
     def index():
-        return {'message': 'Secure Media Depot API'}, 200
+        return render_template('index.html')
     
-    # Serve the video player HTML page for testing
+    @app.route('/login')
+    def login_page():
+        return render_template('login.html')
+    
+    @app.route('/register')
+    def register_page():
+        return render_template('register.html')
+    
     @app.route('/player')
-    def player():
+    def player_page():
         return render_template('video_player.html')
     
     return app
