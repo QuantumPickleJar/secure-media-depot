@@ -265,6 +265,7 @@ class FileController:
         except Exception as err:
             print(f"Error searching files: {err}")
             return jsonify({'error': 'An error occurred during file search'}), 500
+        
 
 # Create a Flask blueprint for file routes
 file_bp = Blueprint('file', __name__)

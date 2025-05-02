@@ -1,6 +1,6 @@
 # Secure Media Depot (Python)
 
-A secure media storage and streaming platform built with Flask, designed with object-oriented principles for maintainability and scalability.
+A secure media storage and streaming platform built with Flask, designed with object-oriented principles for maintainability and scalability. This implementation follows best practices for web application development including separation of concerns, modular design, and security.
 
 ## Features
 
@@ -9,6 +9,7 @@ A secure media storage and streaming platform built with Flask, designed with ob
 - **File Management**: Upload, search, retrieve, and delete various types of media files
 - **User Management**: Admin controls for user approval and management
 - **Security**: Password hashing, secure file handling, and protected routes
+- **Modern UI**: Clean, responsive interface with separated CSS and JavaScript
 
 ## Architecture
 
@@ -18,6 +19,8 @@ The application is built using a layered architecture pattern:
 - **Models**: SQLAlchemy ORM classes for data persistence
 - **Services**: Reusable components like JWT authentication
 - **Middleware**: Cross-cutting concerns like authentication
+- **Templates**: Jinja2 templates for HTML rendering
+- **Static Assets**: Separated CSS and JavaScript files
 
 ## Getting Started
 
@@ -71,9 +74,22 @@ The application is built using a layered architecture pattern:
    python run.py
    ```
 
-2. The API will be available at `http://localhost:8081`
+2. The application will be available at `http://localhost:8081`
 
-3. For testing the video player, navigate to `http://localhost:8081/player`
+3. First steps:
+   - Register an admin user using the admin code from your `.env` file
+   - Log in with your admin credentials
+   - Upload media files
+   - Stream media using the built-in player
+
+## Web Interface
+
+The application provides several web pages for user interaction:
+
+- **Home Page** (`/`): Introduction and feature showcase
+- **Login** (`/login`): User authentication
+- **Registration** (`/register`): New user registration
+- **Video Player** (`/player`): Media streaming interface
 
 ## API Documentation
 
@@ -103,6 +119,23 @@ The application is built using a layered architecture pattern:
 - `PATCH /api/admin/approve/{userId}` - Approve a user
 - `PATCH /api/admin/deny/{userId}` - Deny a user
 - `GET /api/admin/user/{userId}` - Get a specific user
+
+## Frontend Structure
+
+The frontend is built using vanilla HTML, CSS, and JavaScript:
+
+### CSS Structure
+
+- `main.css` - Common styles shared across all pages
+- `home.css` - Home page specific styles
+- `video-player.css` - Video player specific styles
+
+### JavaScript Structure
+
+- `home.js` - Home page functionality
+- `login.js` - Authentication handling
+- `register.js` - User registration functionality
+- `video-player.js` - Media streaming and file management
 
 ## Testing
 
@@ -135,6 +168,9 @@ python/
 ├── controllers/            # API controllers
 ├── models/                 # Database models
 ├── services/               # Reusable services
+├── static/                 # Static assets
+│   ├── css/                # Stylesheets
+│   └── js/                 # JavaScript files
 ├── templates/              # HTML templates
 └── uploads/                # Upload directory for files
 ```
@@ -155,3 +191,4 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 - If you experience database issues, try deleting the `media.db` file and restart the application to recreate it
 - For file upload issues, check that the `uploads` directory exists and is writable
 - If authentication fails, ensure your JWT_SECRET_KEY is properly set in `.env`
+- If static files aren't loading, check that your Flask application is correctly serving files from the static directory

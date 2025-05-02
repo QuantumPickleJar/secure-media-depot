@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Media Depot - Home</title>
+    <link rel="stylesheet" href="/static/css/main.css">
+    <link rel="stylesheet" href="/static/css/home.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome to Secure Media Depot</h1>
+        
+        <div id="logged-in-status" class="status logged-in">
+            You are currently logged in. <button id="logout-btn">Logout</button>
+        </div>
+        
+        <div id="logged-out-status" class="status logged-out">
+            You are not logged in. Please login to access all features.
+        </div>
+        
+        <div class="menu">
+            <a href="/login" class="menu-item">Login</a>
+            <a href="/register" class="menu-item">Register</a>
+            <a href="/player" class="menu-item">Video Player</a>
+        </div>
+        
+        <div class="feature-card">
+            <h3>Secure Authentication</h3>
+            <p>JWT-based authentication with role-based access control. All user passwords are securely hashed.</p>
+        </div>
+        
+        <div class="feature-card">
+            <h3>Media Streaming</h3>
+            <p>Robust video and audio streaming with byte range support for seeking functionality.</p>
+        </div>
+        
+        <div class="feature-card">
+            <h3>File Management</h3>
+            <p>Upload, search, retrieve, and delete various types of media files securely.</p>
+        </div>
+        
+        <div class="feature-card">
+            <h3>User Management</h3>
+            <p>Admin controls for user approval and management.</p>
+        </div>
+    </div>
+    
+    <script src="/static/js/home.js"></script>
+</body>
+</html>
