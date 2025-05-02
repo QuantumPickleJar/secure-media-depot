@@ -96,6 +96,10 @@ def create_app(config=None):
     def player_page():
         return render_template('video_player.html')
     
+    @app.route('/files')
+    def files_page():
+        return render_template('files.html')
+    
     return app
 
 # Create the application instance

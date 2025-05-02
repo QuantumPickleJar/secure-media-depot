@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Media Depot - File Browser</title>
+    <link rel="stylesheet" href="/static/css/main.css">
+    <link rel="stylesheet" href="/static/css/files.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Secure Media Depot - File Browser</h1>
+        
+        <div id="auth-warning" class="auth-warning">
+            You are not logged in. <a href="/login">Click here to log in</a>
+        </div>
+        
+        <div id="error" class="error"></div>
+        <div id="success" class="success"></div>
+        
+        <div class="search-section">
+            <div class="form-group">
+                <label for="search">Search Files:</label>
+                <input type="text" id="search" placeholder="Enter keywords to search">
+                <button onclick="searchFiles()">Search</button>
+            </div>
+        </div>
+        
+        <div class="button-group">
+            <button id="refresh-btn" onclick="loadFileList()">Refresh List</button>
+            <button id="logout-btn">Logout</button>
+        </div>
+        
+        <div id="fileListContainer" class="file-list">
+            <h2>Available Files</h2>
+            <div id="fileList">
+                Loading...
+            </div>
+        </div>
+        
+        <div class="navigation-links">
+            <button onclick="window.location.href='/player'">Go to Video Player</button>
+            <button onclick="window.location.href='/'">Home</button>
+        </div>
+    </div>
+    
+    <script src="/static/js/files.js"></script>
+</body>
+</html>

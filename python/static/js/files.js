@@ -1,0 +1,237 @@
+// Main JavaScript for the files.html page
+document.addEventListener('DOMContentLoaded', function() {
+    // Check if user is logged in
+    checkAuthStatus();
+    
+    // Load the file list on page load
+    loadFileList();
+    
+    // Add event listener for logout button
+    document.getElementById('logout-btn').addEventListener('click', function() {
+        logout();
+    });
+    
+    // Add event listener for search input (pressing Enter)
+    document.getElementById('search').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            searchFiles();
+        }
+    });
+});
+
+/**
+ * Check if the user is authenticated
+ */
+function checkAuthStatus() {
+    const token = localStorage.getItem('token');
+    const authWarning = document.getElementById('auth-warning');
+    
+    if (!token) {
+        authWarning.style.display = 'block';
+    } else {
+        authWarning.style.display = 'none';
+    }
+}
+
+/**
+ * Load the file list from the API
+ */
+function loadFileList() {
+    const token = localStorage.getItem('token');
+    const fileList = document.getElementById('fileList');
+    
+    // Show loading state
+    fileList.innerHTML = 'Loading...';
+    
+    fetch('/api/files/list', {
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        displayFiles(data.files);
+    })
+    .catch(error => {
+        console.error('Error loading files:', error);
+        fileList.innerHTML = `<div class="error">Error loading file list: ${error.message}</div>`;
+    });
+}
+
+/**
+ * Search for files using the API
+ */
+function searchFiles() {
+    const token = localStorage.getItem('token');
+    const searchQuery = document.getElementById('search').value.trim();
+    const fileList = document.getElementById('fileList');
+    
+    // Show loading state
+    fileList.innerHTML = 'Searching...';
+    
+    // If search query is empty, load all files
+    if (!searchQuery) {
+        loadFileList();
+        return;
+    }
+    
+    fetch(`/api/files/search?query=${encodeURIComponent(searchQuery)}`, {
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        displayFiles(data.results);
+    })
+    .catch(error => {
+        console.error('Error searching files:', error);
+        fileList.innerHTML = `<div class="error">Error searching files: ${error.message}</div>`;
+    });
+}
+
+/**
+ * Display the file list in the UI
+ */
+function displayFiles(files) {
+    const fileList = document.getElementById('fileList');
+    
+    // Clear the file list
+    fileList.innerHTML = '';
+    
+    if (!files || files.length === 0) {
+        fileList.innerHTML = 'No files found.';
+        return;
+    }
+    
+    // Create a list of files
+    const ul = document.createElement('ul');
+    ul.className = 'file-items';
+    
+    files.forEach(file => {
+        const li = document.createElement('li');
+        li.className = 'file-item';
+        
+        // Determine if file is a video/audio (streamable) or other type
+        const isStreamable = file.mimetype && (
+            file.mimetype.startsWith('video/') || 
+            file.mimetype.startsWith('audio/')
+        );
+        
+        // Create content for list item
+        li.innerHTML = `
+            <div class="file-info">
+                <span class="file-name">${file.filename}</span>
+                <span class="file-type">${file.mimetype || 'Unknown type'}</span>
+            </div>
+            <div class="file-actions">
+                ${isStreamable ? 
+                    `<button onclick="playFile(${file.id})">Play</button>` : 
+                    `<button onclick="downloadFile(${file.id})">Download</button>`
+                }
+                <button onclick="deleteFile(${file.id}, '${file.filename}')" class="delete-btn">Delete</button>
+            </div>
+        `;
+        
+        ul.appendChild(li);
+    });
+    
+    fileList.appendChild(ul);
+}
+
+/**
+ * Open the video player with the selected file
+ */
+function playFile(fileId) {
+    window.location.href = `/player?id=${fileId}`;
+}
+
+/**
+ * Download a file
+ */
+function downloadFile(fileId) {
+    const token = localStorage.getItem('token');
+    
+    // Create a hidden iframe for downloading
+    const iframe = document.createElement('iframe');
+    iframe.style.display = 'none';
+    iframe.src = `/api/files/${fileId}?token=${token}`;
+    document.body.appendChild(iframe);
+    
+    // Remove the iframe after download starts
+    setTimeout(() => {
+        document.body.removeChild(iframe);
+    }, 2000);
+}
+
+/**
+ * Delete a file
+ */
+function deleteFile(fileId, fileName) {
+    const token = localStorage.getItem('token');
+    
+    if (!confirm(`Are you sure you want to delete "${fileName}"?`)) {
+        return;
+    }
+    
+    fetch(`/api/files/${fileId}`, {
+        method: 'DELETE',
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        // Show success message
+        const successElement = document.getElementById('success');
+        successElement.textContent = 'File deleted successfully';
+        successElement.style.display = 'block';
+        
+        // Hide success message after 3 seconds
+        setTimeout(() => {
+            successElement.style.display = 'none';
+        }, 3000);
+        
+        // Reload the file list
+        loadFileList();
+    })
+    .catch(error => {
+        console.error('Error deleting file:', error);
+        
+        // Show error message
+        const errorElement = document.getElementById('error');
+        errorElement.textContent = `Error deleting file: ${error.message}`;
+        errorElement.style.display = 'block';
+        
+        // Hide error message after 3 seconds
+        setTimeout(() => {
+            errorElement.style.display = 'none';
+        }, 3000);
+    });
+}
+
+/**
+ * Logout the user
+ */
+function logout() {
+    // Clear the token from local storage
+    localStorage.removeItem('token');
+    
+    // Redirect to the login page
+    window.location.href = '/login';
+}
