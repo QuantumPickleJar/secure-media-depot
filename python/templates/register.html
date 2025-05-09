@@ -16,22 +16,22 @@
         <form id="registerForm">
             <div class="form-group">
                 <label for="username">Username:</label>
-                <input type="text" id="username" required>
+                <input type="text" id="username" required autocomplete="username" name="username">
             </div>
             
             <div class="form-group">
                 <label for="email">Email:</label>
-                <input type="email" id="email" required>
+                <input type="email" id="email" required autocomplete="email" name="email">
             </div>
             
             <div class="form-group">
                 <label for="password">Password:</label>
-                <input type="password" id="password" required>
+                <input type="password" id="password" required autocomplete="new-password" name="password">
             </div>
             
             <div class="form-group">
                 <label for="adminCode">Admin Code (Optional):</label>
-                <input type="text" id="adminCode">
+                <input type="text" id="adminCode" autocomplete="off" name="adminCode">
                 <div class="note">Leave blank for regular user registration</div>
             </div>
             
