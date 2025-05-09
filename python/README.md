@@ -67,20 +67,27 @@ The application is built using a layered architecture pattern:
    mkdir uploads
    ```
 
+## Running and Testing the Application
+
 ### Running the Application
 
-1. Start the server
-   ```bash
+1. Start the server using the provided runner script:
+   ```powershell
    python run.py
    ```
+   This will launch the Flask app using the configuration in `app.py` and environment variables from your `.env` file. The application will be available at `http://localhost:8081` by default.
 
-2. The application will be available at `http://localhost:8081`
+### Running Tests
 
-3. First steps:
-   - Register an admin user using the admin code from your `.env` file
-   - Log in with your admin credentials
-   - Upload media files
-   - Stream media using the built-in player
+Basic tests for the video model and service are included in `test_video_service.py`.
+
+To run the tests:
+```powershell
+python test_video_service.py
+```
+This will run a simple test that creates a dummy video row in an in-memory SQLite database and verifies its existence.
+
+---
 
 ## Web Interface
 
