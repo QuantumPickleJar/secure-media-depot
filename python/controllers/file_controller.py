@@ -7,7 +7,7 @@ different file types (streaming vs. download).
 """
 import os
 import mimetypes
-from flask import Blueprint, request, jsonify, send_file, Response, current_app
+from flask import Blueprint, request, jsonify, send_file, Response, current_app, g
 from werkzeug.utils import secure_filename
 from models.file_model import FileModel
 
@@ -41,8 +41,8 @@ class FileController:
         if file.filename == '':
             return jsonify({'error': 'No selected file'}), 400
             
-        # Get username from auth middleware
-        username = request.user.get('username')
+        # Get username from auth middleware via g
+        username = g.user.get('username')
         
         try:
             # Secure the filename to prevent any malicious file paths
@@ -82,8 +82,8 @@ class FileController:
             JSON response with file list or error
         """
         try:
-            # Get username from auth middleware for filtering by permissions if needed
-            username = request.user.get('username')
+            # No longer require authenticated user for file listing 
+            # username = g.user.get('username')  # removed to avoid missing user error
             
             # Get files (could filter by user permissions in a more complex implementation)
             files = self.file_model.get_all_files()
@@ -220,9 +220,9 @@ class FileController:
             JSON response indicating success or error
         """
         try:
-            # Get username from auth middleware
-            username = request.user.get('username')
-            is_admin = request.user.get('is_admin', False)
+            # Get user info from auth middleware via g
+            username = g.user.get('username')
+            is_admin = g.user.get('is_admin', False)
             
             file_info = self.file_model.get_file_by_id(file_id)
             
