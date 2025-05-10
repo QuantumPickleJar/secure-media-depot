@@ -59,11 +59,22 @@ def upload_video():
 # Unified file and video listing endpoint
 @video_bp.route('/list_all', methods=['GET'])
 def list_all_files_and_videos():
-    """Return a unified list of files and videos for the frontend browser."""
+    """Return a unified paginated list of files and videos for the frontend browser."""
     db = current_app.extensions['sqlalchemy'].db
-    files = db.session.query(File).all()
-    videos = db.session.query(Video).all()
-    # Normalize output
+    # Get pagination params
+    try:
+        page = int(request.args.get('page', 1))
+        per_page = int(request.args.get('per_page', 20))
+    except ValueError:
+        page = 1
+        per_page = 20
+
+    # Paginate files and videos separately, then merge
+    files_query = db.session.query(File)
+    videos_query = db.session.query(Video)
+    files_pagination = files_query.order_by(File.id.desc()).paginate(page=page, per_page=per_page, error_out=False)
+    videos_pagination = videos_query.order_by(Video.id.desc()).paginate(page=page, per_page=per_page, error_out=False)
+
     file_items = [
         {
             'id': f.id,
@@ -72,19 +83,28 @@ def list_all_files_and_videos():
             'mimetype': getattr(f, 'mimetype', None),
             'size': getattr(f, 'size', None),
             'type': 'file'
-        } for f in files
+        } for f in files_pagination.items
     ]
     video_items = [
         {
             'id': v.id,
             'filename': v.key,
             'originalName': v.title,
-            'mimetype': v.mime_type,  # FIX: use correct field
-            'size': v.size_bytes,     # FIX: use correct field
+            'mimetype': v.mime_type,
+            'size': v.size_bytes,
             'type': 'video'
-        } for v in videos
+        } for v in videos_pagination.items
     ]
-    return jsonify({'items': file_items + video_items})
+    # Merge and sort by id desc (most recent first)
+    merged_items = sorted(file_items + video_items, key=lambda x: x['id'], reverse=True)
+    return jsonify({
+        'items': merged_items,
+        'page': page,
+        'per_page': per_page,
+        'total_files': files_pagination.total,
+        'total_videos': videos_pagination.total,
+        'total_items': files_pagination.total + videos_pagination.total
+    })
 
 @video_bp.route('/list', methods=['GET'])
 def list_videos():

@@ -1,4 +1,8 @@
 // Main JavaScript for the files.html page
+let currentPage = 1;
+let totalPages = 1;
+const perPage = 20;
+
 document.addEventListener('DOMContentLoaded', function() {
     // Check if user is logged in
     checkAuthStatus();
@@ -21,6 +25,20 @@ document.addEventListener('DOMContentLoaded', function() {
     // Add event listener for refresh button
     document.getElementById('refresh-btn').addEventListener('click', function() {
         loadFileList();
+    });
+
+    // Add event listeners for pagination buttons
+    document.getElementById('prev-page-btn').addEventListener('click', function() {
+        if (currentPage > 1) {
+            currentPage--;
+            loadFileList();
+        }
+    });
+    document.getElementById('next-page-btn').addEventListener('click', function() {
+        if (currentPage < totalPages) {
+            currentPage++;
+            loadFileList();
+        }
     });
 });
 
@@ -65,7 +83,7 @@ function loadFileList() {
     // Show loading state
     fileList.innerHTML = 'Loading...';
     
-    fetch('/api/videos/list_all', {
+    fetch(`/api/videos/list_all?page=${currentPage}&per_page=${perPage}`, {
         headers: {
             'Authorization': `Bearer ${token}`
         }
@@ -81,8 +99,10 @@ function loadFileList() {
         // Support both {items: [...]} and {videos: [...]} for compatibility
         if (Array.isArray(data.items)) {
             displayFiles(data.items);
+            updatePaginationControls(data.page, data.total_items);
         } else if (Array.isArray(data.videos)) {
             displayFiles(data.videos);
+            updatePaginationControls(data.page, data.total_items);
         } else {
             fileList.innerHTML = '<div class="error">No files or videos found in response.</div>';
         }
@@ -91,6 +111,19 @@ function loadFileList() {
         console.error('Error loading files:', error);
         fileList.innerHTML = `<div class="error">Error loading file list: ${error.message}</div>`;
     });
+}
+
+/**
+ * Update pagination controls
+ */
+function updatePaginationControls(page, totalItems) {
+    const pageIndicator = document.getElementById('page-indicator');
+    const prevBtn = document.getElementById('prev-page-btn');
+    const nextBtn = document.getElementById('next-page-btn');
+    totalPages = Math.ceil(totalItems / perPage) || 1;
+    pageIndicator.textContent = `Page ${page} of ${totalPages}`;
+    prevBtn.disabled = page <= 1;
+    nextBtn.disabled = page >= totalPages;
 }
 
 /**
