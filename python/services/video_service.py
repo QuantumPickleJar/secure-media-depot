@@ -14,33 +14,45 @@ class VideoService:
     # - filename: str, the object key (used both on disk and in DB)
     # - title: str, human-readable title stored in metadata
     def upload_video(self, file_stream: FileStorage, filename: str, title: str):
-        # 1. Check disk space
-        free = shutil.disk_usage(self.upload_folder).free
-        file_stream.seek(0, os.SEEK_END)
-        size = file_stream.tell()
-        file_stream.seek(0)
-        if size > free or size + self._total_used() > self.max_storage:
-            raise IOError("Not enough storage available")
+        """
+        Uploads a video file and creates a metadata record in the database.
+        Handles disk space checks and file saving errors.
+        Raises IOError if not enough storage is available or file save fails.
+        """
+        try:
+            # 1. Check disk space
+            free = shutil.disk_usage(self.upload_folder).free
+            file_stream.seek(0, os.SEEK_END)
+            size = file_stream.tell()
+            file_stream.seek(0)
+            if size > free or size + self._total_used() > self.max_storage:
+                raise IOError("Not enough storage available")
 
-        # 2. Save blob
-        dest = os.path.join(self.upload_folder, filename)
-        file_stream.save(dest)
+            # 2. Save blob
+            dest = os.path.join(self.upload_folder, filename)
+            try:
+                file_stream.save(dest)
+            except Exception as e:
+                raise IOError(f"Failed to save file: {e}")
 
-        # 3. Create metadata record
-        video = Video(
-            key=filename,
-            title=title,
-            size_bytes=size,
-            mime_type=file_stream.mimetype
-        )
-        db.session.add(video)
-        db.session.commit()
-        return video
+            # 3. Create metadata record
+            video = Video(
+                key=filename,
+                title=title,
+                size_bytes=size,
+                mime_type=file_stream.mimetype
+            )
+            db.session.add(video)
+            db.session.commit()
+            return video
+        except Exception as e:
+            # Log or re-raise for test visibility
+            print(f"VideoService.upload_video error: {e}")
+            raise
 
     # search_videos parameters:
     # - search_term: str, substring to match against Video.title
     # - page: int, page number for pagination
-    # - per_page: int, number of items per page
     def search_videos(self, search_term: str, page: int = 1, per_page: int = 20):
         '''TODO: add properly formatted python comments here'''
         q = Video.query.filter(Video.title.ilike(f"%{search_term}%"))
