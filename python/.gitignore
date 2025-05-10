@@ -42,6 +42,12 @@ python/uploads/*
 # Logs
 *.log
 debug.log
+python/static/js/debug.log
+python/static/js/coverage/
+python/templates/debug.log
+js/debug.log
+js/coverage/
+js/node_modules/
 
 # IDE specific files
 .idea/
@@ -55,6 +61,8 @@ Thumbs.db
 
 # Node/JS/React build artifacts
 js/build/
+
+frontend/build/
 js/debug.log
 js/coverage/
 js/node_modules/
