@@ -20,11 +20,6 @@ class VideoService:
         Raises IOError if not enough storage is available or file save fails.
         """
         try:
-            # Check for duplicate video by key (filename)
-            existing = Video.query.filter_by(key=filename).first()
-            if existing:
-                raise ValueError(f"A video with the name '{filename}' already exists.")
-
             # 1. Check disk space
             free = shutil.disk_usage(self.upload_folder).free
             file_stream.seek(0, os.SEEK_END)
@@ -50,9 +45,6 @@ class VideoService:
             db.session.add(video)
             db.session.commit()
             return video
-        except ValueError as ve:
-            print(f"VideoService.upload_video duplicate error: {ve}")
-            raise
         except Exception as e:
             # Log or re-raise for test visibility
             print(f"VideoService.upload_video error: {e}")

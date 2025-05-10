@@ -71,20 +71,26 @@ function displayFileList(items) {
         const fileItem = document.createElement('div');
         fileItem.className = 'file-item';
         let iconClass = 'file-icon';
-        if (item.type === 'video' || (item.mimetype && item.mimetype.startsWith('video/'))) {
+        const mimeType = item.mimetype || item.mime_type || 'unknown/unknown';
+        
+        if (item.type === 'video' || (mimeType && mimeType.startsWith('video/'))) {
             iconClass = 'video-icon';
-        } else if (item.mimetype && item.mimetype.startsWith('audio/')) {
+        } else if (mimeType && mimeType.startsWith('audio/')) {
             iconClass = 'audio-icon';
         }
+        
         fileItem.innerHTML = `
             <div class="${iconClass}">${item.originalName || item.filename}</div>
-            <div class="file-meta">Size: ${formatFileSize(item.size || item.size_bytes)} | Type: ${item.mimetype || item.mime_type || 'Unknown'}</div>
+            <div class="file-meta">Size: ${formatFileSize(item.size || item.size_bytes)} | Type: ${mimeType}</div>
         `;
+        
         fileItem.addEventListener('click', () => {
             document.getElementById('fileId').value = item.id;
             document.getElementById('fileId').setAttribute('data-type', item.type);
+            document.getElementById('fileId').setAttribute('data-mimetype', mimeType);
             loadVideo();
         });
+        
         fileListElement.appendChild(fileItem);
     });
 }
@@ -108,10 +114,13 @@ function loadVideo() {
     const token = localStorage.getItem('authToken');
     const fileId = document.getElementById('fileId').value;
     const fileType = document.getElementById('fileId').getAttribute('data-type');
+    const mimeType = document.getElementById('fileId').getAttribute('data-mimetype') || 'video/mp4';
+    
     if (!fileId) {
         showError('Please enter a file ID or select a file from the list');
         return;
     }
+    
     const videoPlayer = document.getElementById('videoPlayer');
     let src = '';
     if (fileType === 'video') {
@@ -119,14 +128,34 @@ function loadVideo() {
     } else {
         src = `/api/files/${fileId}`;
     }
+    
     // Remove all sources
     while (videoPlayer.firstChild) {
         videoPlayer.removeChild(videoPlayer.firstChild);
     }
+    
     const sourceElement = document.createElement('source');
     sourceElement.src = src;
-    sourceElement.setAttribute('type', 'video/mp4');
-    videoPlayer.appendChild(sourceElement);
+    sourceElement.setAttribute('type', mimeType);    videoPlayer.appendChild(sourceElement);
+    
+    // Add error handling for debugging
+    videoPlayer.onerror = function(e) {
+        console.error('Video error:', videoPlayer.error);
+        const errorMessages = {
+            1: 'The fetching of the video was aborted',
+            2: 'Network error occurred while loading the video',
+            3: 'Error decoding the video',
+            4: 'Video not supported'
+        };
+        
+        let errorMessage = 'Unknown error occurred';
+        if (videoPlayer.error && videoPlayer.error.code) {
+            errorMessage = errorMessages[videoPlayer.error.code] || errorMessage;
+        }
+        
+        showError(`Error playing video: ${errorMessage}. Check browser console for details.`);
+    };
+    
     videoPlayer.load();
     // Optionally, handle token for protected endpoints (if needed)
     // For most browsers, Authorization header on <video> is not supported directly

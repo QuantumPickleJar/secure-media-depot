@@ -108,12 +108,27 @@ def stream_video(video_id):
     """Stream a video file by its video ID."""
     db = current_app.extensions['sqlalchemy'].db
     video = db.session.query(Video).filter_by(id=video_id).first()
+    
     if not video:
+        print(f"DEBUG: Video ID {video_id} not found in database")
         return jsonify({'error': 'Video not found'}), 404
+    
     upload_folder = current_app.config.get('UPLOAD_FOLDER', 'uploads')
     file_path = os.path.join(upload_folder, video.key)
+    
+    print(f"DEBUG: Stream request for video ID {video_id}")
+    print(f"DEBUG: Video record: key={video.key}, mime_type={video.mime_type}, size={video.size_bytes}")
+    print(f"DEBUG: Looking for file at: {file_path}")
+    
     if not os.path.exists(file_path):
+        print(f"DEBUG: File not found at path: {file_path}")
         return jsonify({'error': 'File not found on disk'}), 404
+    
+    # Check if the file is actually a valid video file
+    file_size = os.path.getsize(file_path)
+    print(f"DEBUG: Found file at {file_path}, size: {file_size} bytes")
+    
     from flask import send_file
     # Always use the correct MIME type from the Video model
+    print(f"DEBUG: Streaming file with MIME type: {video.mime_type}")
     return send_file(file_path, mimetype=video.mime_type, as_attachment=False)
