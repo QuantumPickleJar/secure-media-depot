@@ -82,9 +82,15 @@ exports.getFileById = async (req, res) => {
     // error out if the file can't be found 
     const file = await File.findById(req.params.id);
     if (!file) {
+=======
+    const file = await File.findById(req.params.id);
+    
+    if (!file) {                        // Make sure the file exists first
+>>>>>>> Stashed changes
       return res.status(404).json({error: 'File not found'});
     }
     
+    // 
     const filePath = path.resolve(file.file_path);
     
     if (file.is_streamable) {           // Stream the file if it's compatible
