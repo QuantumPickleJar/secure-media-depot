@@ -80,30 +80,9 @@ def print_postman_collection():
                     "description": "Login and get JWT token"
                 }
             },
-            # Get User Profile
+            # Upload Video
             {
-                "name": "3. Get User Profile",
-                "request": {
-                    "method": "GET",
-                    "header": [
-                        {
-                            "key": "Authorization",
-                            "value": "Bearer {{token}}"
-                        }
-                    ],
-                    "url": {
-                        "raw": "http://localhost:8081/api/users/profile",
-                        "protocol": "http",
-                        "host": ["localhost"],
-                        "port": "8081",
-                        "path": ["api", "users", "profile"]
-                    },
-                    "description": "Get user profile (requires authentication)"
-                }
-            },
-            # File Upload
-            {
-                "name": "4. Upload File",
+                "name": "3. Upload Video",
                 "request": {
                     "method": "POST",
                     "header": [
@@ -113,11 +92,11 @@ def print_postman_collection():
                         }
                     ],
                     "url": {
-                        "raw": "http://localhost:8081/api/files/upload",
+                        "raw": "http://localhost:8081/api/videos/upload",
                         "protocol": "http",
                         "host": ["localhost"],
                         "port": "8081",
-                        "path": ["api", "files", "upload"]
+                        "path": ["api", "videos", "upload"]
                     },
                     "body": {
                         "mode": "formdata",
@@ -125,16 +104,45 @@ def print_postman_collection():
                             {
                                 "key": "file",
                                 "type": "file",
-                                "src": "/path/to/your/file.mp4"
+                                "src": "/path/to/your/video.mp4"
+                            },
+                            {
+                                "key": "title",
+                                "type": "text",
+                                "value": "My Test Video"
                             }
                         ]
                     },
-                    "description": "Upload a file (requires authentication)"
+                    "description": "Upload a video file (requires authentication)"
+                }
+            },
+            # Upload Video (VideoService)
+            {
+                "name": "6. Upload Video (VideoService)",
+                "request": {
+                    "method": "POST",
+                    "header": [
+                        {"key": "Authorization", "value": "Bearer {{jwt_token}}"}
+                    ],
+                    "body": {
+                        "mode": "formdata",
+                        "formdata": [
+                            {"key": "file", "type": "file", "src": "<path-to-video-file>"},
+                            {"key": "title", "type": "text", "value": "Test Video"}
+                        ]
+                    },
+                    "url": {
+                        "raw": "http://localhost:8081/api/videos/upload",
+                        "protocol": "http",
+                        "host": ["localhost"],
+                        "port": "8081",
+                        "path": ["api", "videos", "upload"]
+                    }
                 }
             },
             # List Files
             {
-                "name": "5. Get File List",
+                "name": "4. Get File List",
                 "request": {
                     "method": "GET",
                     "header": [
@@ -155,7 +163,7 @@ def print_postman_collection():
             },
             # Stream Video
             {
-                "name": "6. Stream Video",
+                "name": "5. Stream Video",
                 "request": {
                     "method": "GET",
                     "header": [
@@ -181,7 +189,7 @@ def print_postman_collection():
             },
             # Admin Endpoints
             {
-                "name": "7. Get All Users (Admin)",
+                "name": "6. Get All Users (Admin)",
                 "request": {
                     "method": "GET",
                     "header": [
@@ -198,6 +206,31 @@ def print_postman_collection():
                         "path": ["api", "admin", "users"]
                     },
                     "description": "Get all users (requires admin)"
+                }
+            },
+            # Paginated List Files and Videos
+            {
+                "name": "7. List All Files and Videos (Paginated)",
+                "request": {
+                    "method": "GET",
+                    "header": [
+                        {
+                            "key": "Authorization",
+                            "value": "Bearer {{token}}"
+                        }
+                    ],
+                    "url": {
+                        "raw": "http://localhost:8081/api/videos/list_all?page=1&per_page=10",
+                        "protocol": "http",
+                        "host": ["localhost"],
+                        "port": "8081",
+                        "path": ["api", "videos", "list_all"],
+                        "query": [
+                            {"key": "page", "value": "1"},
+                            {"key": "per_page", "value": "10"}
+                        ]
+                    },
+                    "description": "List all files and videos with pagination (requires authentication)"
                 }
             }
         ]
@@ -217,11 +250,11 @@ def print_postman_collection():
 def print_testing_instructions():
     """Print instructions for testing the application"""
     print_header("Getting Started")
-    print("1. Install Python dependencies:")
-    print("   pip install -r requirements.txt\n")
+    print("1. Install Python dependencies (or use Docker Compose):")
+    print("   pip install -r requirements.txt  # or docker-compose up --build\n")
     
     print("2. Run the Flask application:")
-    print("   python app.py\n")
+    print("   python app.py  # or docker-compose up\n")
     
     print("3. The server will start on http://localhost:8081\n")
     
@@ -235,24 +268,23 @@ def print_testing_instructions():
     print("   b. Login to get a JWT token")
     print("   c. After login, copy the token value from the response")
     print("   d. Create a Postman environment variable named 'token' and paste the value")
-    print("   e. Now you can call the other endpoints that require authentication\n")
+    print("   e. Use the 'Upload Video' request to upload a video file")
+    print("   f. Use the 'Get File List' or 'List All Files and Videos' request to list uploaded files (now paginated)")
+    print("   g. Use the 'Stream Video' request to stream a video file\n")
+    
+    print_header("Pagination Example")
+    print("To test pagination, use the /api/videos/list_all endpoint with ?page=2&per_page=10, e.g.:")
+    print("   GET http://localhost:8081/api/videos/list_all?page=2&per_page=10\n")
     
     print_header("Testing File Uploads and Streaming")
-    print("1. For file uploads:")
-    print("   a. Use the 'Upload File' request")
+    print("1. For video uploads:")
+    print("   a. Use the 'Upload Video' request")
     print("   b. Click on 'Body' tab, select 'form-data'")
-    print("   c. Add a key 'file' of type 'File' and select a file to upload\n")
+    print("   c. Add a key 'file' of type 'File' and select a video file to upload")
+    print("   d. Add a key 'title' of type 'Text' and provide a title for the video\n")
     
     print("2. For testing video streaming:")
-    print("   a. First upload a video file using the upload endpoint")
-    print("   b. Get the file ID from the file list endpoint")
-    print("   c. Use the 'Stream Video' request, replacing '1' with your file ID")
-    print("   d. You can test partial content by adding a 'Range' header\n")
-    
-    print("3. To test in a browser (after getting a token):")
-    print("   a. Use a browser extension to set Authorization header")
-    print("   b. Navigate to http://localhost:8081/api/files/{fileId}")
-    print("   c. For videos, the browser will automatically use byte ranges\n")
+    print("   a. Use the 'Stream Video' request (GET /api/videos/stream/<video_id>)\n")
 
 def print_dummy_data_instructions():
     """Instructions for creating dummy test data"""
@@ -266,6 +298,9 @@ def print_dummy_data_instructions():
     print("3. Generate a dummy audio file (requires ffmpeg):")
     print("   ffmpeg -f lavfi -i sine=frequency=1000:duration=5 -c:a aac test_audio.mp3\n")
     
+    print("4. You can use any small video file (e.g., .mp4) for testing video uploads.")
+    print("5. For file uploads, any file type is accepted.\n")
+
 if __name__ == "__main__":
     print_header("Secure Media Depot - Postman Testing Guide")
     print_testing_instructions()

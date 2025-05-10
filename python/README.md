@@ -77,6 +77,26 @@ The application is built using a layered architecture pattern:
    ```
    This will launch the Flask app using the configuration in `app.py` and environment variables from your `.env` file. The application will be available at `http://localhost:8081` by default.
 
+### Running with Docker (Recommended for Raspberry Pi or production)
+
+1. Build and start the app using Docker Compose from the project root:
+   ```sh
+   docker-compose up --build
+   ```
+   This will build the image and start the Flask app on port 8081.
+
+2. The uploads directory and media.db will be persisted on your host via Docker volumes:
+   - `./python/uploads` on your host is mapped to `/app/uploads` in the container.
+   - `./python/media.db` on your host is mapped to `/app/media.db` in the container.
+
+3. To access the app, open:
+   - `http://<raspberry-pi-ip>:8081/` in your browser.
+
+4. To stop the app:
+   ```sh
+   docker-compose down
+   ```
+
 ### Running Tests
 
 Basic tests for the video model and service are included in `test_video_service.py`.
@@ -126,6 +146,11 @@ The application provides several web pages for user interaction:
 - `PATCH /api/admin/approve/{userId}` - Approve a user
 - `PATCH /api/admin/deny/{userId}` - Deny a user
 - `GET /api/admin/user/{userId}` - Get a specific user
+
+### Pagination Support
+
+- The `/api/videos/list_all` endpoint now supports `page` and `per_page` query parameters for efficient browsing of large file/video lists.
+- The frontend file browser includes Next/Prev buttons and a page indicator.
 
 ## Frontend Structure
 
@@ -195,7 +220,6 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## Troubleshooting
 
-- If you experience database issues, try deleting the `media.db` file and restart the application to recreate it
-- For file upload issues, check that the `uploads` directory exists and is writable
-- If authentication fails, ensure your JWT_SECRET_KEY is properly set in `.env`
-- If static files aren't loading, check that your Flask application is correctly serving files from the static directory
+- If you experience file upload issues, ensure the `uploads` directory exists and is writable, or that your Docker volume is mounted correctly.
+- For database issues, check that `media.db` is present and mapped as a volume if using Docker.
+- For static file issues, ensure Flask is serving from the correct static directory.
