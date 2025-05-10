@@ -67,6 +67,39 @@ The application is built using a layered architecture pattern:
    mkdir uploads
    ```
 
+## Generating a New JWT Secret Key for Deployment
+
+For security, you should generate a new, strong JWT secret key on each deployment (e.g., when cloning to a new device like your Raspberry Pi). Never use the sample or default key in production.
+
+### How to Generate a Secure JWT Secret Key
+
+You can generate a secure random key using Python:
+
+```bash
+python -c "import secrets; print(secrets.token_urlsafe(64))"
+```
+
+Copy the output and set it as your `JWT_SECRET_KEY` in your `.env` file:
+
+```
+JWT_SECRET_KEY=your_generated_secret_here
+```
+
+**Tip:** You can also use this method to generate a new `SECRET_KEY` for Flask sessions.
+
+### Example .env Section
+```
+SECRET_KEY=your_flask_secret_here
+JWT_SECRET_KEY=your_generated_secret_here
+ADMIN_CODE=admin123
+UPLOAD_FOLDER=uploads
+SQLALCHEMY_DATABASE_URI=sqlite:///media.db
+```
+
+**Never commit your real secret keys to version control.**
+
+---
+
 ## Running and Testing the Application
 
 ### Running the Application
