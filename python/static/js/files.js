@@ -19,6 +19,57 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
+
+// Modal open/close logic
+document.getElementById('openUploadModal').onclick = function() {
+  document.getElementById('uploadModal').style.display = 'flex';
+};
+document.getElementById('closeUploadModal').onclick = function() {
+  document.getElementById('uploadModal').style.display = 'none';
+};
+window.onclick = function(event) {
+  if (event.target == document.getElementById('uploadModal')) {
+    document.getElementById('uploadModal').style.display = 'none';
+  }
+};
+
+// Upload logic
+document.getElementById('videoUploadForm').onsubmit = async function(e) {
+  e.preventDefault();
+  const fileInput = document.getElementById('videoFile');
+  const titleInput = document.getElementById('videoTitle');
+  const statusDiv = document.getElementById('uploadStatus');
+  const token = localStorage.getItem('authToken');
+  if (!fileInput.files.length) {
+    statusDiv.textContent = 'Please select a file.';
+    return;
+  }
+  const formData = new FormData();
+  formData.append('file', fileInput.files[0]);
+  formData.append('title', titleInput.value);
+
+  statusDiv.textContent = 'Uploading...';
+  try {
+    const res = await fetch('/api/videos/upload', {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${token}` },
+      body: formData
+    });
+    const data = await res.json();
+    if (res.ok) {
+      statusDiv.textContent = 'Upload successful!';
+      fileInput.value = '';
+      titleInput.value = '';
+      document.getElementById('uploadModal').style.display = 'none';
+      // Optionally refresh file list here
+    } else {
+      statusDiv.textContent = data.error || 'Upload failed.';
+    }
+  } catch (err) {
+    statusDiv.textContent = 'Error uploading file.';
+  }
+};
+
 /**
  * Check if the user is authenticated
  */
