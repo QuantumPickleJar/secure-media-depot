@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Media Depot - Register</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Register for Secure Media Depot</h1>
+        
+        <div id="error" class="error"></div>
+        <div id="success" class="success"></div>
+        
+        <form id="registerForm">
+            <div class="form-group">
+                <label for="username">Username:</label>
+                <input type="text" id="username" required autocomplete="username" name="username">
+            </div>
+            
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" required autocomplete="email" name="email">
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" id="password" required autocomplete="new-password" name="password">
+            </div>
+            
+            <div class="form-group">
+                <label for="adminCode">Admin Code (Optional):</label>
+                <input type="text" id="adminCode" autocomplete="off" name="adminCode">
+                <div class="note">Leave blank for regular user registration</div>
+            </div>
+            
+            <button type="submit">Register</button>
+        </form>
+        
+        <div class="links">
+            <a href="/login">Already have an account? Login</a>
+            <a href="/">Home</a>
+        </div>
+    </div>
+    
+    <script src="{{ url_for('static', filename='js/register.js') }}"></script>
+</body>
+</html>

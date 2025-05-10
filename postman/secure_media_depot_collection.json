@@ -1,0 +1,214 @@
+{
+  "info": {
+    "name": "Secure Media Depot API",
+    "description": "Collection for testing the Secure Media Depot Python API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "1. Register User",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8081/api/users/register",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8081",
+          "path": [
+            "api",
+            "users",
+            "register"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"admin\",\n  \"email\": \"admin@example.com\",\n  \"password\": \"admin123\",\n  \"adminCode\": \"admin123\"\n}"
+        },
+        "description": "Register the first user as admin"
+      }
+    },
+    {
+      "name": "2. Login User",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8081/api/auth/login",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8081",
+          "path": [
+            "api",
+            "auth",
+            "login"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"admin\",\n  \"password\": \"admin123\"\n}"
+        },
+        "description": "Login and get JWT token"
+      }
+    },
+    {
+      "name": "3. Get User Profile",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8081/api/users/profile",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8081",
+          "path": [
+            "api",
+            "users",
+            "profile"
+          ]
+        },
+        "description": "Get user profile (requires authentication)"
+      }
+    },
+    {
+      "name": "4. Upload File",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8081/api/files/upload",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8081",
+          "path": [
+            "api",
+            "files",
+            "upload"
+          ]
+        },
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "file",
+              "type": "file",
+              "src": "/path/to/your/file.mp4"
+            }
+          ]
+        },
+        "description": "Upload a file (requires authentication)"
+      }
+    },
+    {
+      "name": "5. Get File List",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8081/api/files/list",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8081",
+          "path": [
+            "api",
+            "files",
+            "list"
+          ]
+        },
+        "description": "List all files (requires authentication)"
+      }
+    },
+    {
+      "name": "6. Stream Video",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          },
+          {
+            "key": "Range",
+            "value": "bytes=0-",
+            "description": "Optional byte range for partial content"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8081/api/files/1",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8081",
+          "path": [
+            "api",
+            "files",
+            "1"
+          ]
+        },
+        "description": "Stream a video by ID (adjust ID as needed)"
+      }
+    },
+    {
+      "name": "7. Get All Users (Admin)",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8081/api/admin/users",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8081",
+          "path": [
+            "api",
+            "admin",
+            "users"
+          ]
+        },
+        "description": "Get all users (requires admin)"
+      }
+    }
+  ]
+}

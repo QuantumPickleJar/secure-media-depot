@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Media Depot - Video Player</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/video-player.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Secure Media Depot - Video Player</h1>
+        
+        <div id="auth-warning" class="auth-warning">
+            You are not logged in. <a href="/login">Click here to log in</a>
+        </div>
+        
+        <div id="error" class="error"></div>
+        
+        <div id="file-selector">
+            <div class="form-group">
+                <label for="fileId">Select a File:</label>
+                <input type="text" id="fileId" placeholder="Enter the file ID or select from below">
+            </div>
+            
+            <button onclick="loadVideo()">Play</button>
+            <button onclick="loadFileList()">Refresh File List</button>
+            <button id="logout-btn">Logout</button>
+        </div>
+        
+        <div id="fileListContainer" class="file-list">
+            <h2>Available Files</h2>
+            <div id="fileList">
+                Loading...
+            </div>
+        </div>
+        
+        <div id="videoContainer">
+            <video id="videoPlayer" controls>
+                Your browser does not support the video tag.
+            </video>
+        </div>
+        
+        <div class="button-group">
+            <button onclick="window.location.href='/login'">Go to Login</button>
+            <button onclick="window.location.href='/files'">Library</button>
+            <button onclick="window.location.href='/'">Home</button>
+        </div>
+    </div>
+    
+    <script src="{{ url_for('static', filename='js/video-player.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Media Depot - File Browser</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/files.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/file-browser.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Secure Media Depot - File Browser</h1>
+          <div id="auth-warning" class="auth-warning" style="display: none;">
+            You are not logged in. <a href="/login">Click here to log in</a>
+        </div>
+        <div id="error" class="error"></div>
+        <div id="success" class="success"></div>
+        
+        <div class="search-section">
+            <div class="form-group">
+                <label for="search">Search Files:</label>
+                <input type="text" id="search" placeholder="Enter keywords to search">
+                <button id="search-btn">Search</button>
+            </div>
+        </div>
+
+        <div class="button-group">
+            <button id="refresh-btn">Refresh List</button>
+            <button id="logout-btn">Logout</button>
+            <button id="upload-btn">Upload Video</button>
+        </div>
+
+        <!-- Upload Modal -->
+        <div id="uploadModal" class="modal">
+            <div class="modal-content">
+                <span class="close" id="closeUploadModal">&times;</span>
+                <h2>Upload Video</h2>
+                <form id="videoUploadForm">
+                    <input type="file" id="videoFile" name="file" accept="video/*" required><br><br>
+                    <input type="text" id="videoTitle" name="title" placeholder="Video Title" required><br><br>
+                    <button type="submit">Upload</button>
+                </form>
+                <div id="uploadStatus"></div>
+            </div>
+        </div>
+        
+        <div id="fileListContainer" class="file-list">
+            <h2>Available Files</h2>
+            <div id="fileList">
+                Loading...
+            </div>
+        </div>
+
+        <div id="pagination-controls" class="pagination-controls">
+            <button id="prev-page-btn">Previous</button>
+            <span id="page-indicator">Page 1</span>
+            <button id="next-page-btn">Next</button>
+        </div>
+        
+        <div class="navigation-links">
+            <button id="player-btn">Go to Video Player</button>
+            <button id="home-btn">Home</button>
+        </div>
+    </div>
+    
+    <script src="{{ url_for('static', filename='js/files.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/file-upload-modal.js') }}"></script>
+</body>
+</html>
