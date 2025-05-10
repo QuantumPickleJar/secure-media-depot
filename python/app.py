@@ -38,11 +38,12 @@ def create_app(config=None):
     
     # Trust proxy headers if behind a reverse proxy
     app.wsgi_app = ProxyFix(app.wsgi_app)
-    
-    # Apply configuration
+      # Apply configuration
+    # Get absolute path for uploads folder
+    default_uploads_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'uploads')
     app.config.from_mapping(
         SECRET_KEY=os.environ.get('SECRET_KEY', 'dev_key_change_in_production'),
-        UPLOAD_FOLDER=os.environ.get('UPLOAD_FOLDER', 'uploads'),
+        UPLOAD_FOLDER=os.environ.get('UPLOAD_FOLDER', default_uploads_path),
         MAX_CONTENT_LENGTH=100 * 1024 * 1024,  # 100MB max upload size
         SQLALCHEMY_DATABASE_URI=os.environ.get('SQLALCHEMY_DATABASE_URI', 'sqlite:///media.db'),
         JWT_SECRET_KEY=os.environ.get('JWT_SECRET_KEY', 'jwt_secret_change_in_production')

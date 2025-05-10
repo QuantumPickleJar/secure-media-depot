@@ -5,7 +5,13 @@ from models.video_model import db, Video
 
 class VideoService:
     def __init__(self, upload_folder: str, max_storage_bytes: int):
-        self.upload_folder = upload_folder
+        # Make sure we use an absolute path for uploads
+        if not os.path.isabs(upload_folder):
+            # Get the absolute path relative to the Python folder
+            base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+            self.upload_folder = os.path.join(base_dir, upload_folder)
+        else:
+            self.upload_folder = upload_folder
         self.max_storage = max_storage_bytes
         os.makedirs(self.upload_folder, exist_ok=True)
 

@@ -113,7 +113,10 @@ def stream_video(video_id):
         print(f"DEBUG: Video ID {video_id} not found in database")
         return jsonify({'error': 'Video not found'}), 404
     
-    upload_folder = current_app.config.get('UPLOAD_FOLDER', 'uploads')
+    upload_folder = current_app.config.get('UPLOAD_FOLDER')
+    if not os.path.isabs(upload_folder):
+        # Convert relative path to absolute if needed
+        upload_folder = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), upload_folder)
     file_path = os.path.join(upload_folder, video.key)
     
     print(f"DEBUG: Stream request for video ID {video_id}")
