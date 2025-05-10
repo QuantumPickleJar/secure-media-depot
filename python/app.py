@@ -31,7 +31,8 @@ def create_app(config=None):
     Returns:
         Configured Flask application instance
     """
-    app = Flask(__name__)
+    app = Flask(__name__, static_url_path='/static', static_folder='static')
+
     
     # Enable CORS
     CORS(app)
