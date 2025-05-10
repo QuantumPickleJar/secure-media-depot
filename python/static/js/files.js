@@ -17,8 +17,16 @@ document.addEventListener('DOMContentLoaded', function() {
             searchFiles();
         }
     });
+
+    // Add event listener for refresh button
+    document.getElementById('refresh-btn').addEventListener('click', function() {
+        loadFileList();
+    });
 });
 
+// Expose functions globally
+window.checkAuthStatus = checkAuthStatus;
+window.loadFileList = loadFileList;
 
 // Modal open/close logic
 document.getElementById('openUploadModal').onclick = function() {
@@ -30,43 +38,6 @@ document.getElementById('closeUploadModal').onclick = function() {
 window.onclick = function(event) {
   if (event.target == document.getElementById('uploadModal')) {
     document.getElementById('uploadModal').style.display = 'none';
-  }
-};
-
-// Upload logic
-document.getElementById('videoUploadForm').onsubmit = async function(e) {
-  e.preventDefault();
-  const fileInput = document.getElementById('videoFile');
-  const titleInput = document.getElementById('videoTitle');
-  const statusDiv = document.getElementById('uploadStatus');
-  const token = localStorage.getItem('authToken');
-  if (!fileInput.files.length) {
-    statusDiv.textContent = 'Please select a file.';
-    return;
-  }
-  const formData = new FormData();
-  formData.append('file', fileInput.files[0]);
-  formData.append('title', titleInput.value);
-
-  statusDiv.textContent = 'Uploading...';
-  try {
-    const res = await fetch('/api/videos/upload', {
-      method: 'POST',
-      headers: { 'Authorization': `Bearer ${token}` },
-      body: formData
-    });
-    const data = await res.json();
-    if (res.ok) {
-      statusDiv.textContent = 'Upload successful!';
-      fileInput.value = '';
-      titleInput.value = '';
-      document.getElementById('uploadModal').style.display = 'none';
-      // Optionally refresh file list here
-    } else {
-      statusDiv.textContent = data.error || 'Upload failed.';
-    }
-  } catch (err) {
-    statusDiv.textContent = 'Error uploading file.';
   }
 };
 
@@ -85,7 +56,7 @@ function checkAuthStatus() {
 }
 
 /**
- * Load the file list from the API
+ * Load the file and video list from the unified API
  */
 function loadFileList() {
     const token = localStorage.getItem('token');
@@ -94,7 +65,7 @@ function loadFileList() {
     // Show loading state
     fileList.innerHTML = 'Loading...';
     
-    fetch('/api/files/list', {
+    fetch('/api/videos/list_all', {
         headers: {
             'Authorization': `Bearer ${token}`
         }
@@ -106,7 +77,7 @@ function loadFileList() {
         return response.json();
     })
     .then(data => {
-        displayFiles(data.files);
+        displayFiles(data.items);
     })
     .catch(error => {
         console.error('Error loading files:', error);
@@ -173,24 +144,30 @@ function displayFiles(files) {
         const li = document.createElement('li');
         li.className = 'file-item';
         
-        // Determine if file is a video/audio (streamable) or other type
-        const isStreamable = file.mimetype && (
-            file.mimetype.startsWith('video/') || 
-            file.mimetype.startsWith('audio/')
-        );
+        // Use icons for type
+        let icon = '';
+        if (file.type === 'video' || (file.mimetype && file.mimetype.startsWith('video/'))) {
+            icon = '<span class="file-icon">🎬</span>';
+        } else {
+            icon = '<span class="file-icon">📄</span>';
+        }
+        
+        // Only show Play for video files
+        let actions = '';
+        if (file.type === 'video' || (file.mimetype && file.mimetype.startsWith('video/'))) {
+            actions += `<button onclick="playFile(${file.id})">Play</button>`;
+        }
+        actions += `<button onclick="deleteFile(${file.id}, '${file.filename}')" class="delete-btn">Delete</button>`;
         
         // Create content for list item
         li.innerHTML = `
             <div class="file-info">
-                <span class="file-name">${file.filename}</span>
+                ${icon}
+                <span class="file-name">${file.originalName || file.filename}</span>
                 <span class="file-type">${file.mimetype || 'Unknown type'}</span>
             </div>
             <div class="file-actions">
-                ${isStreamable ? 
-                    `<button onclick="playFile(${file.id})">Play</button>` : 
-                    `<button onclick="downloadFile(${file.id})">Download</button>`
-                }
-                <button onclick="deleteFile(${file.id}, '${file.filename}')" class="delete-btn">Delete</button>
+                ${actions}
             </div>
         `;
         

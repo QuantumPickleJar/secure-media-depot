@@ -98,7 +98,7 @@ class FileController:
     
     def get_file(self, file_id):
         """
-        Gets a specific file by its ID.
+        Gets a specific file by its ID, but only allows video files to be streamed/downloaded.
         
         Args:
             file_id: ID of the file to retrieve
@@ -117,24 +117,13 @@ class FileController:
             if not os.path.exists(filepath):
                 return jsonify({'error': 'File not found on server'}), 404
                 
-            # Check if this is a streamable file type
+            # Only allow video files
             mimetype = file_info.mimetype or mimetypes.guess_type(filepath)[0]
-            is_streamable = mimetype and (
-                mimetype.startswith('video/') or 
-                mimetype.startswith('audio/')
-            )
-            
-            # Handle streaming for video/audio content
-            if is_streamable:
-                return self._stream_file(filepath, mimetype)
+            if not mimetype or not mimetype.startswith('video/'):
+                return jsonify({'error': 'Only video files can be streamed or downloaded.'}), 403
                 
-            # For other file types, return as attachment for download
-            return send_file(
-                filepath,
-                mimetype=mimetype,
-                as_attachment=True,
-                attachment_filename=file_info.filename
-            )
+            # Handle streaming for video content
+            return self._stream_file(filepath, mimetype)
                 
         except Exception as err:
             print(f"Error retrieving file: {err}")
