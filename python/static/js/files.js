@@ -59,7 +59,7 @@ function checkAuthStatus() {
  * Load the file and video list from the unified API
  */
 function loadFileList() {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('token') || localStorage.getItem('authToken');
     const fileList = document.getElementById('fileList');
     
     // Show loading state
@@ -77,7 +77,15 @@ function loadFileList() {
         return response.json();
     })
     .then(data => {
-        displayFiles(data.items);
+        console.log('DEBUG: /api/videos/list_all response', data);
+        // Support both {items: [...]} and {videos: [...]} for compatibility
+        if (Array.isArray(data.items)) {
+            displayFiles(data.items);
+        } else if (Array.isArray(data.videos)) {
+            displayFiles(data.videos);
+        } else {
+            fileList.innerHTML = '<div class="error">No files or videos found in response.</div>';
+        }
     })
     .catch(error => {
         console.error('Error loading files:', error);

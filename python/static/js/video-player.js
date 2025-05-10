@@ -30,13 +30,10 @@ function checkAuth() {
  * Load the list of available files
  */
 function loadFileList() {
-    const token = localStorage.getItem('authToken');
+    const token = localStorage.getItem('authToken') || localStorage.getItem('token');
     const fileListElement = document.getElementById('fileList');
-    
-    // Show loading message
     fileListElement.innerHTML = 'Loading files...';
-    
-    fetch('/api/files/list', {
+    fetch('/api/videos/list_all', {
         headers: {
             'Authorization': `Bearer ${token}`
         }
@@ -48,10 +45,14 @@ function loadFileList() {
         return response.json();
     })
     .then(data => {
-        if (data.files && data.files.length > 0) {
-            displayFileList(data.files);
+        console.log('DEBUG: /api/videos/list_all response', data);
+        // Accept both {items: [...]} and {videos: [...]} for compatibility
+        if (Array.isArray(data.items)) {
+            displayFileList(data.items);
+        } else if (Array.isArray(data.videos)) {
+            displayFileList(data.videos);
         } else {
-            fileListElement.innerHTML = 'No files available.';
+            fileListElement.innerHTML = 'No files or videos found in response.';
         }
     })
     .catch(error => {
@@ -63,34 +64,27 @@ function loadFileList() {
 /**
  * Display the file list in the DOM
  */
-function displayFileList(files) {
+function displayFileList(items) {
     const fileListElement = document.getElementById('fileList');
     fileListElement.innerHTML = '';
-    
-    files.forEach(file => {
+    items.forEach(item => {
         const fileItem = document.createElement('div');
         fileItem.className = 'file-item';
-        
-        // Determine the icon based on mimetype
         let iconClass = 'file-icon';
-        if (file.mimetype && file.mimetype.startsWith('video/')) {
+        if (item.type === 'video' || (item.mimetype && item.mimetype.startsWith('video/'))) {
             iconClass = 'video-icon';
-        } else if (file.mimetype && file.mimetype.startsWith('audio/')) {
+        } else if (item.mimetype && item.mimetype.startsWith('audio/')) {
             iconClass = 'audio-icon';
         }
-        
-        // Create the file item content
         fileItem.innerHTML = `
-            <div class="${iconClass}">${file.filename}</div>
-            <div class="file-meta">Size: ${formatFileSize(file.size)} | Type: ${file.mimetype || 'Unknown'}</div>
+            <div class="${iconClass}">${item.originalName || item.filename}</div>
+            <div class="file-meta">Size: ${formatFileSize(item.size || item.size_bytes)} | Type: ${item.mimetype || item.mime_type || 'Unknown'}</div>
         `;
-        
-        // Add click event to play the video
         fileItem.addEventListener('click', () => {
-            document.getElementById('fileId').value = file.id;
+            document.getElementById('fileId').value = item.id;
+            document.getElementById('fileId').setAttribute('data-type', item.type);
             loadVideo();
         });
-        
         fileListElement.appendChild(fileItem);
     });
 }
@@ -113,45 +107,30 @@ function formatFileSize(bytes) {
 function loadVideo() {
     const token = localStorage.getItem('authToken');
     const fileId = document.getElementById('fileId').value;
-    
+    const fileType = document.getElementById('fileId').getAttribute('data-type');
     if (!fileId) {
         showError('Please enter a file ID or select a file from the list');
         return;
     }
-    
     const videoPlayer = document.getElementById('videoPlayer');
-    videoPlayer.src = `/api/files/${fileId}`;
-    videoPlayer.setAttribute('type', 'video/mp4'); // Default, will be overridden by server
-    
-    // Add token to video source
-    const sourceElement = document.createElement('source');
-    sourceElement.src = `/api/files/${fileId}`;
-    sourceElement.setAttribute('type', 'video/mp4');
-    
-    // Clear any existing sources and append the new one
+    let src = '';
+    if (fileType === 'video') {
+        src = `/api/videos/stream/${fileId}`;
+    } else {
+        src = `/api/files/${fileId}`;
+    }
+    // Remove all sources
     while (videoPlayer.firstChild) {
         videoPlayer.removeChild(videoPlayer.firstChild);
     }
+    const sourceElement = document.createElement('source');
+    sourceElement.src = src;
+    sourceElement.setAttribute('type', 'video/mp4');
     videoPlayer.appendChild(sourceElement);
-    
     videoPlayer.load();
-    
-    // Add authorization header to video requests
-    videoPlayer.addEventListener('loadstart', function() {
-        const xhr = new XMLHttpRequest();
-        xhr.open('GET', sourceElement.src);
-        xhr.setRequestHeader('Authorization', `Bearer ${token}`);
-        xhr.responseType = 'blob';
-        xhr.onload = function() {
-            if (this.status === 200) {
-                const blob = new Blob([this.response], { type: 'video/mp4' });
-                const url = URL.createObjectURL(blob);
-                videoPlayer.src = url;
-                videoPlayer.play();
-            }
-        };
-        xhr.send();
-    });
+    // Optionally, handle token for protected endpoints (if needed)
+    // For most browsers, Authorization header on <video> is not supported directly
+    // If needed, use XHR/fetch to get blob and set videoPlayer.src = URL.createObjectURL(blob)
 }
 
 /**

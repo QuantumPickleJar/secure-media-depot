@@ -12,7 +12,11 @@ from controllers.auth_controller import auth_bp
 from controllers.user_controller import user_bp
 from controllers.admin_controller import admin_bp
 from controllers.file_controller import file_bp
+from controllers.video_controller import video_bp
 from auth.auth_middleware import authenticate_jwt, authorize_admin
+from models.video_model import db
+from models.file_model import File
+from models.video_model import Video
 
 # Load environment variables
 load_dotenv()
@@ -40,7 +44,7 @@ def create_app(config=None):
         SECRET_KEY=os.environ.get('SECRET_KEY', 'dev_key_change_in_production'),
         UPLOAD_FOLDER=os.environ.get('UPLOAD_FOLDER', 'uploads'),
         MAX_CONTENT_LENGTH=100 * 1024 * 1024,  # 100MB max upload size
-        DATABASE_URL=os.environ.get('DATABASE_URL', 'sqlite:///media.db'),
+        SQLALCHEMY_DATABASE_URI=os.environ.get('SQLALCHEMY_DATABASE_URI', 'sqlite:///media.db'),
         JWT_SECRET_KEY=os.environ.get('JWT_SECRET_KEY', 'jwt_secret_change_in_production')
     )
     
@@ -54,6 +58,7 @@ def create_app(config=None):
     app.register_blueprint(auth_bp, url_prefix='/api/auth')
     app.register_blueprint(user_bp, url_prefix='/api/users')
     app.register_blueprint(file_bp, url_prefix='/api/files')
+    app.register_blueprint(video_bp, url_prefix='/api/videos')
     
     # Apply authentication middleware to admin routes
     admin_bp.before_request(authenticate_jwt)
@@ -61,6 +66,10 @@ def create_app(config=None):
     
     app.register_blueprint(admin_bp, url_prefix='/api/admin')
     
+    db.init_app(app)
+    with app.app_context():
+        db.create_all()
+
     # Apply authentication to user profile route
     @user_bp.before_request
     def protect_profile():
