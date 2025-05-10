@@ -1,0 +1,14 @@
+version: '3.8'
+services:
+  flask-app:
+    build: ./python
+    container_name: secure-media-depot
+    ports:
+      - "8081:8081"
+    volumes:
+      - ./python/uploads:/app/uploads
+      - ./python/media.db:/app/media.db
+    environment:
+      - FLASK_ENV=production
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped

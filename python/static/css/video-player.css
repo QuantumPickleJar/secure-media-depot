@@ -1,0 +1,89 @@
+/* 
+ * Video Player Specific Styles 
+ */
+
+video {
+    max-width: 100%;
+    margin-top: 20px;
+}
+
+#videoContainer {
+    margin: 20px 0;
+}
+
+#videoPlayer {
+    width: 100%;
+    max-height: 500px;
+    background-color: #000;
+    border-radius: 4px;
+}
+
+.auth-warning {
+    background-color: #fff3cd;
+    color: #856404;
+    padding: 10px;
+    border-radius: 4px;
+    margin-bottom: 15px;
+    display: none;
+}
+
+.file-list {
+    margin: 20px 0;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 10px;
+}
+
+.file-list h2 {
+    margin-top: 0;
+    font-size: 1.2em;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.file-item {
+    padding: 8px;
+    border-bottom: 1px solid #eee;
+    cursor: pointer;
+}
+
+.file-item:hover {
+    background-color: #f5f5f5;
+}
+
+.file-item:last-child {
+    border-bottom: none;
+}
+
+.file-item button {
+    margin-left: 10px;
+    padding: 5px 10px;
+}
+
+.file-meta {
+    font-size: 0.8em;
+    color: #666;
+    margin-top: 3px;
+}
+
+/* For audio files displayed in the list */
+.audio-icon::before {
+    content: "🔊";
+    margin-right: 5px;
+}
+
+/* For video files displayed in the list */
+.video-icon::before {
+    content: "🎬";
+    margin-right: 5px;
+}
+
+/* For other file types displayed in the list */
+.file-icon::before {
+    content: "📄";
+    margin-right: 5px;
+}
+
+#logout-btn {
+    background-color: #f44336;
+}

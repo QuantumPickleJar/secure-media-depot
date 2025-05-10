@@ -61,7 +61,13 @@ Thumbs.db
 
 # Node/JS/React build artifacts
 js/build/
+
 frontend/build/
+js/debug.log
+js/coverage/
+js/node_modules/
+python/static/js/debug.log
+python/static/js/coverage/
 
 # Docker artifacts
 docker-compose.override.yml
