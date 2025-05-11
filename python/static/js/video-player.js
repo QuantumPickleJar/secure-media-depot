@@ -136,9 +136,14 @@ function loadVideo() {
     
     const sourceElement = document.createElement('source');
     sourceElement.src = src;
-    sourceElement.setAttribute('type', mimeType);    videoPlayer.appendChild(sourceElement);
+    sourceElement.setAttribute('type', mimeType);
+    videoPlayer.appendChild(sourceElement);
     
-    // Add error handling for debugging
+    // Buffering logic: wait for enough data before playing
+    videoPlayer.load();
+    videoPlayer.oncanplay = function() {
+        videoPlayer.play().catch(() => {}); // Autoplay if possible
+    };
     videoPlayer.onerror = function(e) {
         console.error('Video error:', videoPlayer.error);
         const errorMessages = {
@@ -155,11 +160,6 @@ function loadVideo() {
         
         showError(`Error playing video: ${errorMessage}. Check browser console for details.`);
     };
-    
-    videoPlayer.load();
-    // Optionally, handle token for protected endpoints (if needed)
-    // For most browsers, Authorization header on <video> is not supported directly
-    // If needed, use XHR/fetch to get blob and set videoPlayer.src = URL.createObjectURL(blob)
 }
 
 /**
