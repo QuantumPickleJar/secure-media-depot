@@ -222,7 +222,7 @@ function displayFiles(files) {
  * Open the video player with the selected file
  */
 function playFile(fileId) {
-    window.location.href = `/player?id=${fileId}`;
+    window.location.href = `/media/player?id=${fileId}`;
 }
 
 /**
@@ -300,7 +300,6 @@ function deleteFile(fileId, fileName) {
 function logout() {
     // Clear the token from local storage
     localStorage.removeItem('token');
-    
     // Redirect to the login page
-    window.location.href = '/login';
+    window.location.href = '/media/login';
 }

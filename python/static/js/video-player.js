@@ -180,5 +180,5 @@ function showError(message) {
  */
 function logout() {
     localStorage.removeItem('authToken');
-    window.location.href = '/login';
+    window.location.href = '/media/login';
 }

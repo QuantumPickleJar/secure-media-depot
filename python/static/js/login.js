@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const token = localStorage.getItem('authToken');
     if (token) {
         // Redirect to player or home page if already logged in
-        window.location.href = '/player';
+        window.location.href = '/media/player';
         return;
     }
     
@@ -66,7 +66,7 @@ function handleLogin() {
             
             // Redirect to the video player or home page
             setTimeout(() => {
-                window.location.href = '/player';
+                window.location.href = '/media/player';
             }, 1000);
         }
     })

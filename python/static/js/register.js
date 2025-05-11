@@ -80,7 +80,7 @@ document.getElementById('registerForm').addEventListener('submit', function(e) {
         // Redirect to login after a brief delay unless approval is pending
         if (data.user && (data.user.is_approved === 1 || data.user.is_admin === 1)) {
             setTimeout(() => {
-                window.location.href = '/login';
+                window.location.href = '/media/login';
             }, 2000);
         }
     })
