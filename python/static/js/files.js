@@ -65,11 +65,12 @@ window.onclick = function(event) {
 function checkAuthStatus() {
     const token = localStorage.getItem('token');
     const authWarning = document.getElementById('auth-warning');
-    
-    if (!token) {
-        authWarning.style.display = 'block';
-    } else {
-        authWarning.style.display = 'none';
+    if (authWarning) {
+        if (!token) {
+            authWarning.style.display = 'block';
+        } else {
+            authWarning.style.display = 'none';
+        }
     }
 }
 
