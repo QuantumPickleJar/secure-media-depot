@@ -25,25 +25,16 @@ load_dotenv()
 def create_app(config=None):
     """
     Create and configure the Flask application.
-    
-    Args:
-        config: Optional configuration dictionary
-    Returns:
-        Configured Flask application instance
     """
-    # ──────────────────────────────────────────────────────────────────────────────
-    # Tell Flask to serve its static folder at /media/static instead of /static
-    # ──────────────────────────────────────────────────────────────────────────────
+    # Instantiate Flask with static assets served at /static
     app = Flask(
         __name__,
-        static_folder='static',            # where your CSS/JS live on disk
-        static_url_path='/media/static'    # URL path to serve them under
+        static_folder='static',
+        static_url_path='/static'
     )
 
     # Enable CORS
     CORS(app)
-    
-    # Trust proxy headers if behind a reverse proxy
     app.wsgi_app = ProxyFix(app.wsgi_app)
 
     # Base configuration
@@ -62,14 +53,11 @@ def create_app(config=None):
         app.config.update(config)
     os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
-    # ──────────────────────────────────────────────────────────────────────────────
-    # Register your API blueprints exactly as before (unchanged URLs under /api/…)
-    # ──────────────────────────────────────────────────────────────────────────────
+    # Register API blueprints (unchanged)
     app.register_blueprint(auth_bp,  url_prefix='/api/auth')
     app.register_blueprint(user_bp,  url_prefix='/api/users')
     app.register_blueprint(file_bp,  url_prefix='/api/files')
     app.register_blueprint(video_bp, url_prefix='/api/videos')
-
     admin_bp.before_request(authenticate_jwt)
     admin_bp.before_request(authorize_admin)
     app.register_blueprint(admin_bp, url_prefix='/api/admin')
@@ -78,46 +66,40 @@ def create_app(config=None):
     with app.app_context():
         db.create_all()
 
-    # ──────────────────────────────────────────────────────────────────────────────
-    # Create a UI blueprint for all your front-end pages and mount it at /media
-    # ──────────────────────────────────────────────────────────────────────────────
+    # Group all UI routes into a blueprint mounted at /media
     ui_bp = Blueprint(
-        'ui',                  # blueprint name
-        __name__,              # module
+        'ui',
+        __name__,
         template_folder='templates'
     )
 
-    @ui_bp.route('/')  # responds to GET /media/
+    @ui_bp.route('/')
     def index():
         return render_template('index.html')
 
-    @ui_bp.route('/login')  # responds to GET /media/login
+    @ui_bp.route('/login')
     def login_page():
         return render_template('login.html')
 
-    @ui_bp.route('/register')  # GET /media/register
+    @ui_bp.route('/register')
     def register_page():
         return render_template('register.html')
 
-    @ui_bp.route('/player')  # GET /media/player
+    @ui_bp.route('/player')
     def player_page():
         return render_template('video_player.html')
 
-    @ui_bp.route('/files')  # GET /media/files
+    @ui_bp.route('/files')
     def files_page():
         return render_template('files.html')
 
-    # mount the UI blueprint under /media
     app.register_blueprint(ui_bp, url_prefix='/media')
 
-    # ──────────────────────────────────────────────────────────────────────────────
-    # Apply your existing JWT protections
-    # ──────────────────────────────────────────────────────────────────────────────
+    # JWT protections (unchanged)
     @user_bp.before_request
     def protect_profile():
         if request.endpoint == 'user.profile':
             return authenticate_jwt(lambda: None)()
-            
     @file_bp.before_request
     def protect_file_routes():
         public_endpoints = {'file.search'}
