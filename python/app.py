@@ -75,7 +75,8 @@ def create_app(config=None):
 
     @ui_bp.route('/')
     def home_page():
-        return redirect(url_for('ui.files_page'))
+        # Home page for /media, shows a landing or welcome page
+        return render_template('index.html')
 
     @ui_bp.route('/login')
     def login_page():
