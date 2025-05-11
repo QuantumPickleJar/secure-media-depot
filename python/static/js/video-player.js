@@ -115,6 +115,9 @@ function loadVideo() {
     const fileId = document.getElementById('fileId').value;
     const fileType = document.getElementById('fileId').getAttribute('data-type');
     const mimeType = document.getElementById('fileId').getAttribute('data-mimetype') || 'video/mp4';
+    const loadingBar = document.getElementById('video-loading-bar');
+    const progressBar = document.getElementById('video-progress');
+    const loadingText = document.getElementById('video-loading-text');
     
     if (!fileId) {
         showError('Please enter a file ID or select a file from the list');
@@ -139,12 +142,39 @@ function loadVideo() {
     sourceElement.setAttribute('type', mimeType);
     videoPlayer.appendChild(sourceElement);
     
-    // Buffering logic: wait for enough data before playing
-    videoPlayer.load();
-    videoPlayer.oncanplay = function() {
-        videoPlayer.play().catch(() => {}); // Autoplay if possible
-    };
-    videoPlayer.onerror = function(e) {
+    // Show loading bar
+    loadingBar.style.display = 'block';
+    progressBar.value = 0;
+    loadingText.textContent = 'Loading video...';
+
+    // Listen for progress events
+    let lastBuffered = 0;
+    function updateProgress() {
+        try {
+            if (videoPlayer.buffered.length > 0) {
+                const bufferedEnd = videoPlayer.buffered.end(videoPlayer.buffered.length - 1);
+                const duration = videoPlayer.duration || 1;
+                let percent = Math.round((bufferedEnd / duration) * 100);
+                if (!isNaN(percent)) {
+                    progressBar.value = percent;
+                    loadingText.textContent = `Buffering: ${percent}%`;
+                }
+                lastBuffered = percent;
+            }
+        } catch (e) {}
+    }
+    videoPlayer.addEventListener('progress', updateProgress);
+    videoPlayer.addEventListener('loadeddata', updateProgress);
+    videoPlayer.addEventListener('canplay', function() {
+        loadingBar.style.display = 'none';
+        progressBar.value = 100;
+        loadingText.textContent = '';
+        videoPlayer.play().catch(() => {});
+    });
+    videoPlayer.addEventListener('error', function(e) {
+        loadingBar.style.display = 'none';
+        progressBar.value = 0;
+        loadingText.textContent = '';
         console.error('Video error:', videoPlayer.error);
         const errorMessages = {
             1: 'The fetching of the video was aborted',
@@ -152,14 +182,13 @@ function loadVideo() {
             3: 'Error decoding the video',
             4: 'Video not supported'
         };
-        
         let errorMessage = 'Unknown error occurred';
         if (videoPlayer.error && videoPlayer.error.code) {
             errorMessage = errorMessages[videoPlayer.error.code] || errorMessage;
         }
-        
         showError(`Error playing video: ${errorMessage}. Check browser console for details.`);
-    };
+    });
+    videoPlayer.load();
 }
 
 /**

@@ -1,5 +1,7 @@
 // boolean flag to prevent parallel uploads
-let uploadInProgress = false;
+if (typeof uploadInProgress === 'undefined') {
+  var uploadInProgress = false;
+}
 
 // grab form, file input, and the new progress bar
 const uploadForm    = document.getElementById('upload-form');
