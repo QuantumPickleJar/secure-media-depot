@@ -72,6 +72,7 @@ document.addEventListener('DOMContentLoaded', function() {
         };
         xhr.onreadystatechange = function() {
             if (xhr.readyState === XMLHttpRequest.DONE) {
+                let errorMsg = '';
                 try {
                     const data = JSON.parse(xhr.responseText);
                     if (xhr.status >= 200 && xhr.status < 300) {
@@ -84,16 +85,28 @@ document.addEventListener('DOMContentLoaded', function() {
                             if (typeof loadFileList === 'function') loadFileList();
                         }, 800);
                     } else {
-                        statusDiv.textContent = data.error || 'Upload failed.';
+                        errorMsg = data.error || 'Upload failed.';
                     }
                 } catch (err) {
-                    statusDiv.textContent = 'Upload failed.';
+                    errorMsg = 'Upload failed. Server did not return JSON.';
+                }
+                if (xhr.status < 200 || xhr.status >= 300) {
+                    errorMsg += ` (HTTP ${xhr.status} ${xhr.statusText})`;
+                    if (xhr.responseText) errorMsg += `\nResponse: ${xhr.responseText}`;
+                    alert(errorMsg); // Show in alert box for debugging
+                    statusDiv.textContent = errorMsg;
                 }
             }
         };
         xhr.onerror = function() {
+            alert('Network error or server unreachable.');
             statusDiv.textContent = 'Error uploading file.';
         };
+        xhr.ontimeout = function() {
+            alert('Upload timed out.');
+            statusDiv.textContent = 'Upload timed out.';
+        };
+        xhr.timeout = 10 * 60 * 1000; // 10 minutes
         xhr.send(formData);
     });
 
