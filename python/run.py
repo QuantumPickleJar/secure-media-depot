@@ -1,29 +1,21 @@
-#!/usr/bin/env python3
+from app import create_app
 """
-Secure Media Depot Runner
-
-This script provides a convenient way to run the application.
+This script serves as the entry point for running the Flask application.
+Modules:
+    os: Provides a way of using operating system-dependent functionality.
+    app: Imports the `create_app` function from the `app` module to initialize the Flask application.
+Functions:
+    create_app(): Factory function to create and configure the Flask application instance.
+Execution:
+    When executed as the main program, the script:
+    - Reads the `PORT` environment variable to determine the port number (default is 8081).
+    - Runs the Flask application on host `0.0.0.0` to make it accessible externally.
+    - Enables debug mode for development purposes.
 """
-import os
-import sys
-from dotenv import load_dotenv
-from app import app
 
-# Add the current directory to the path if running as executable
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
-
-# Load environment variables
-load_dotenv()
-
-def main():
-    """Run the Flask application with environment settings"""
-    port = int(os.environ.get('PORT', 8081))
-    debug = os.environ.get('DEBUG', 'True').lower() == 'true'
-    
-    print(f"Starting Secure Media Depot on http://localhost:{port}")
-    print("Press Ctrl+C to stop the server")
-    
-    app.run(host='0.0.0.0', port=port, debug=debug)
+app = create_app()
 
 if __name__ == '__main__':
-    main()
+    import os
+    port = int(os.environ.get('PORT', 8081))
+    app.run(host='0.0.0.0', port=port, debug=True)
