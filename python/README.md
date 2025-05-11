@@ -146,10 +146,13 @@ This will run a simple test that creates a dummy video row in an in-memory SQLit
 
 The application provides several web pages for user interaction:
 
-- **Home Page** (`/`): Introduction and feature showcase
-- **Login** (`/login`): User authentication
-- **Registration** (`/register`): New user registration
-- **Video Player** (`/player`): Media streaming interface
+- **Home Page** (`/media`): Introduction and feature showcase
+- **Login** (`/media/login`): User authentication
+- **Registration** (`/media/register`): New user registration
+- **Video Player** (`/media/player`): Media streaming interface
+- **Library** (`/media/files`): File browser and management
+
+> **Note:** All UI routes are now grouped under the `/media` blueprint. If you previously used `/login`, `/register`, `/player`, or `/files`, update your bookmarks and navigation to use `/media/login`, `/media/register`, `/media/player`, and `/media/files` respectively. Static assets are served at `/media/static/...`.
 
 ## API Documentation
 

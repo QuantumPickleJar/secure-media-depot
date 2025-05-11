@@ -42,9 +42,9 @@
         </div>
         
         <div class="button-group">
-            <button onclick="window.location.href='/login'">Go to Login</button>
-            <button onclick="window.location.href='/files'">Library</button>
-            <button onclick="window.location.href='/'">Home</button>
+            <button onclick="window.location.href='{{ url_for('ui.login_page') }}'">Go to Login</button>
+            <button onclick="window.location.href='{{ url_for('ui.files_page') }}'">Library</button>
+            <button onclick="window.location.href='{{ url_for('ui.home_page') }}'">Home</button>
         </div>
     </div>
     
