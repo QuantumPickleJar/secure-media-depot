@@ -9,8 +9,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // Check if user is already logged in
     const token = localStorage.getItem('authToken');
     if (token) {
-        // Redirect to player or home page if already logged in
-        window.location.href = '/media/player';
+        // Redirect to files page if already logged in
+        window.location.href = '/media/files';
         return;
     }
     
@@ -64,9 +64,9 @@ function handleLogin() {
             localStorage.setItem('authToken', data.token);
             showSuccess('Login successful! Redirecting...');
             
-            // Redirect to the video player or home page
+            // Redirect to the files page
             setTimeout(() => {
-                window.location.href = '/media/player';
+                window.location.href = '/media/files';
             }, 1000);
         }
     })

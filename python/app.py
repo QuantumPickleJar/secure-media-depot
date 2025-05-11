@@ -6,7 +6,7 @@ Main Flask Application
 Configures and runs the Flask server with all routes and middleware.
 """
 import os
-from flask import Flask, request, render_template, Blueprint
+from flask import Flask, request, render_template, Blueprint, redirect, url_for
 from flask_cors import CORS
 from werkzeug.middleware.proxy_fix import ProxyFix
 from dotenv import load_dotenv
@@ -74,8 +74,8 @@ def create_app(config=None):
     )
 
     @ui_bp.route('/')
-    def index():
-        return render_template('index.html')
+    def home_page():
+        return redirect(url_for('ui.files_page'))
 
     @ui_bp.route('/login')
     def login_page():
