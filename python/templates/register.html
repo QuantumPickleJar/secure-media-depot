@@ -39,8 +39,8 @@
         </form>
         
         <div class="links">
-            <a href="/login">Already have an account? Login</a>
-            <a href="/">Home</a>
+            <a href="{{ url_for('ui.login_page') }}">Already have an account? Login</a>
+            <a href="{{ url_for('ui.player_page') }}">Video Player</a>
         </div>
     </div>
     
